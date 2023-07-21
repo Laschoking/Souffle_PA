@@ -1,0 +1,275 @@
+
+.decl ConstFold_souffle(s:symbol, g: symbol, i:number, h:symbol)
+
+.decl Integer_souffle(s:symbol, i:number, g:symbol, h:symbol)
+
+.decl IntConst_souffle(s:symbol, i:number, f:symbol)
+
+.decl AssignBinop(s:symbol, i:number, g:symbol, h:symbol)
+.input AssignBinop(IO="file", filename="AssignBinop.facts", delimiter="\t")
+
+.decl OperatorAt(s:symbol, g:symbol)
+.input OperatorAt(IO="file", filename="OperatorAt.facts", delimiter="\t")
+
+.decl AssignOperFrom(s:symbol, i:number, f:symbol)
+.input AssignOperFrom(IO="file", filename="AssignOperFrom.facts", delimiter="\t")
+
+.decl AssignOperFromConstant(s:symbol, i:number, k:symbol)
+.input AssignOperFromConstant(IO="file", filename="AssignOperFromConstant.facts", delimiter="\t")
+
+.decl AssignNumConstant(s:symbol, i:number, k:symbol,g:symbol, h:symbol)
+.input AssignNumConstant(IO="file", filename="AssignNumConstant.facts", delimiter="\t")
+
+.decl AssignUnop(s:symbol, i:number, g:symbol, h:symbol)
+.input AssignUnop(IO="file", filename="AssignUnop.facts", delimiter="\t")
+
+.decl AssignLocal(s:symbol, i:number, k:symbol, g:symbol, h:symbol)
+.input AssignLocal(IO="file", filename="AssignLocal.facts", delimiter="\t")
+
+
+Integer_souffle(?var, ?val, ?ins, ?meth),
+IntConst_souffle(?var, ?val,?meth) :-
+    AssignNumConstant(?ins, _, ?x, ?var, ?meth),
+    !contains("L", ?x), !contains("E", ?x), !contains("F", ?x),
+    !contains("N", ?x), !contains("I", ?x), ?val = to_number(?x).
+
+// Assignment without Operator
+IntConst_souffle(?var_to, ?val, ?meth),
+ConstFold_souffle(?ins,?var_to, ?val,  ?meth) :-
+    AssignLocal(?ins, _ , ?var_from, ?var_to, ?meth),
+    !contains("phi-assign", ?ins),
+    IntConst_souffle(?var_from, ?val, ?meth).
+
+// Addition
+
+    //((contains("L", ?x),
+    //?z = strlen(?x),
+    //?s = substr(?x,0,?z-1),
+    //?left = to_number(?s));
+    //(!contains("L", ?x),
+    //?left = to_number(?x))),
+
+
+IntConst_souffle(?var, ?val1 + ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 + ?val2,  ?meth) :-
+    AssignBinop(?ins,_ , ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "+" ,
+    AssignOperFromConstant(?ins, _, ?x) ,
+    AssignOperFrom(?ins, _, ?var2) ,
+    IntConst_souffle(?var2, ?val2,?meth) ,
+        !contains("L", ?x), !contains("E", ?x), !contains("F", ?x),
+    !contains("N", ?x), !contains("I", ?x), ?val1 = to_number(?x).
+
+IntConst_souffle(?var, ?val1 + ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 + ?val2, ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "+" ,
+    AssignOperFromConstant(?ins, ?pos1, ?x1) ,
+    AssignOperFromConstant(?ins, ?pos2, ?x2) ,
+    !contains("L", ?x1), !contains("E", ?x1), !contains("F", ?x1),
+    !contains("N", ?x1), !contains("I", ?x1), ?val1 = to_number(?x1),
+    !contains("L", ?x2), !contains("E", ?x2), !contains("F", ?x2),
+    !contains("N", ?x2), !contains("I", ?x2), ?val2 = to_number(?x2),
+    ?pos1 < ?pos2.
+
+IntConst_souffle(?var, ?val1 + ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 + ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "+" ,
+    AssignOperFrom(?ins, ?pos1, ?var1) ,
+    AssignOperFrom(?ins, ?pos2, ?var2) ,
+    ?pos1 < ?pos2 ,
+    IntConst_souffle(?var1, ?val1, ?meth) ,
+    IntConst_souffle(?var2, ?val2,?meth) .
+
+
+
+// Subtraktion
+
+IntConst_souffle(?var, ?val1 - ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 - ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "-" ,
+    AssignOperFromConstant(?ins, ?pos1, ?x) ,
+        !contains("L", ?x), !contains("E", ?x), !contains("F", ?x),
+    !contains("N", ?x), !contains("I", ?x), ?val1 = to_number(?x),
+    AssignOperFrom(?ins, ?pos2, ?var2) ,
+    ?pos1 < ?pos2, 
+    IntConst_souffle(?var2, ?val2,?meth) .
+
+IntConst_souffle(?var, ?val1 - ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 - ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "-" ,
+    AssignOperFrom(?ins, ?pos1, ?var1) ,
+    IntConst_souffle(?var1, ?val1, ?meth) ,
+    AssignOperFromConstant(?ins, ?pos2, ?x) ,
+    !contains("L", ?x), !contains("E", ?x), !contains("F", ?x),
+    !contains("N", ?x), !contains("I", ?x), ?val2 = to_number(?x),
+    ?pos1 < ?pos2.
+
+
+IntConst_souffle(?var, ?val1 - ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 - ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "-" ,
+    AssignOperFromConstant(?ins, ?pos1, ?x1) ,
+    AssignOperFromConstant(?ins, ?pos2, ?x2) ,
+    !contains("L", ?x1), !contains("E", ?x1), !contains("F", ?x1),
+    !contains("N", ?x1), !contains("I", ?x1), ?val1 = to_number(?x1),
+    !contains("L", ?x2), !contains("E", ?x2), !contains("F", ?x2),
+    !contains("N", ?x2), !contains("I", ?x2), ?val2 = to_number(?x2),
+    ?pos1 < ?pos2.
+
+IntConst_souffle( ?var, ?val1 - ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 - ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "-" ,
+    AssignOperFrom(?ins, ?pos1, ?var1) ,
+    AssignOperFrom(?ins, ?pos2, ?var2) ,
+    ?pos1 < ?pos2 ,
+    IntConst_souffle(?var1, ?val1, ?meth) ,
+    IntConst_souffle(?var2, ?val2,?meth) .
+
+
+// Multiplikation
+
+
+IntConst_souffle(?var, ?val1 * ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 * ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "*" ,
+    AssignOperFromConstant(?ins, _, ?x) ,
+    AssignOperFrom(?ins, _, ?var2) ,
+    IntConst_souffle(?var2, ?val2,?meth) ,
+    !contains("L", ?x), !contains("E", ?x), !contains("F", ?x),
+    !contains("N", ?x), !contains("I", ?x), ?val1 = to_number(?x).
+
+
+
+IntConst_souffle( ?var, ?val1 * ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 * ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "*" ,
+    AssignOperFromConstant(?ins, ?pos1, ?x1) ,
+    AssignOperFromConstant(?ins, ?pos2, ?x2) ,
+    ?pos1 < ?pos2,
+    !contains("L", ?x1), !contains("E", ?x1), !contains("F", ?x1),
+    !contains("N", ?x1), !contains("I", ?x1), ?val1 = to_number(?x1),
+    !contains("L", ?x2), !contains("E", ?x2), !contains("F", ?x2),
+    !contains("N", ?x2), !contains("I", ?x2), ?val2 = to_number(?x2).
+
+IntConst_souffle(?var, ?val1 * ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 * ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "*" ,
+    AssignOperFrom(?ins, ?pos1, ?var1) ,
+    AssignOperFrom(?ins, ?pos2, ?var2) ,
+    ?pos1 < ?pos2 ,
+    IntConst_souffle(?var1, ?val1, ?meth) ,
+    IntConst_souffle(?var2, ?val2,?meth) .
+
+
+// Division
+
+
+IntConst_souffle(?var, ?val1 / ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 / ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "/" ,
+    AssignOperFromConstant(?ins, ?pos1, ?x) ,
+    AssignOperFrom(?ins, ?pos2, ?var2) ,
+    ?pos1 < ?pos2, 
+    IntConst_souffle(?var2, ?val2,?meth) ,
+    !contains("L", ?x), !contains("E", ?x), !contains("F", ?x),
+    !contains("N", ?x), !contains("I", ?x), ?val1 = to_number(?x).
+
+IntConst_souffle(?var, ?val1 / ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 / ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "/" ,
+    AssignOperFrom(?ins, ?pos1, ?var1) ,
+    IntConst_souffle(?var1, ?val1, ?meth) ,
+    AssignOperFromConstant(?ins, ?pos2, ?x) ,
+    ?pos1 < ?pos2,
+    !contains("L", ?x), !contains("E", ?x), !contains("F", ?x),
+    !contains("N", ?x), !contains("I", ?x), ?val2 = to_number(?x).
+
+
+IntConst_souffle(?var, ?val1 / ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 / ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "/" ,
+    AssignOperFromConstant(?ins, ?pos1, ?x1) ,
+    AssignOperFromConstant(?ins, ?pos2, ?x2) ,
+    ?pos1 < ?pos2,
+    !contains("L", ?x1), !contains("E", ?x1), !contains("F", ?x1),
+    !contains("N", ?x1), !contains("I", ?x1), ?val1 = to_number(?x1),
+    !contains("L", ?x2), !contains("E", ?x2), !contains("F", ?x2),
+    !contains("N", ?x2), !contains("I", ?x2), ?val2 = to_number(?x2).
+
+IntConst_souffle(?var, ?val1 / ?val2, ?meth),
+ConstFold_souffle(?ins,?var, ?val1 / ?val2,  ?meth) :-
+    AssignBinop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "/" ,
+    AssignOperFrom(?ins, ?pos1, ?var1) ,
+    AssignOperFrom(?ins, ?pos2, ?var2) ,
+    ?pos1 < ?pos2 ,
+    IntConst_souffle(?var1, ?val1, ?meth) ,
+    IntConst_souffle(?var2, ?val2,?meth) .
+
+
+
+// Unary-Negation
+IntConst_souffle(?var, 0 - ?val1 , ?meth),
+ConstFold_souffle(?ins,?var, 0 - ?val1 ,  ?meth) :-
+    AssignUnop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "-" ,
+    AssignOperFrom(?ins, _, ?var1) ,
+    IntConst_souffle(?var1, ?val1, ?meth) .
+
+IntConst_souffle(?var, 0 - ?val1 , ?meth),
+ConstFold_souffle(?ins,?var, 0 - ?val1 ,  ?meth) :-
+    AssignUnop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "-" ,
+    AssignOperFromConstant(?ins, _, ?x) ,
+    !contains("L", ?x), !contains("E", ?x), !contains("F", ?x),
+    !contains("N", ?x), !contains("I", ?x), ?val1 = to_number(?x).
+
+// Unary-Negation -> sometimes it is translated to ~ in OperatorAt
+IntConst_souffle(?var, 0 - ?val1 , ?meth),
+ConstFold_souffle(?ins,?var, 0 - ?val1 ,  ?meth) :-
+    AssignUnop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "~" ,
+    AssignOperFrom(?ins, _, ?var1) ,
+    IntConst_souffle(?var1, ?val1, ?meth) .
+
+IntConst_souffle(?var, 0 - ?val1 , ?meth),
+ConstFold_souffle(?ins,?var, 0 - ?val1 ,  ?meth) :-
+    AssignUnop(?ins,_, ?var, ?meth) ,
+    OperatorAt(?ins, ?op) ,
+    ?op = "~" ,
+    AssignOperFromConstant(?ins, _, ?x) ,
+    !contains("L", ?x), !contains("E", ?x), !contains("F", ?x),
+    !contains("N", ?x), !contains("I", ?x), ?val1 = to_number(?x).
+
+.output ConstFold_souffle 
+.output IntConst_souffle 
+.output Integer_souffle 

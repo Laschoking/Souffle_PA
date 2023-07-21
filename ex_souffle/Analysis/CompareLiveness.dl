@@ -1,0 +1,34 @@
+.type Var <: symbol
+.type Method <: symbol
+.type Operator <: symbol
+.type Instruction <: symbol
+.type MethodInv <: symbol
+
+.decl Use1(?assign:Instruction, ?var:Var)
+.input Use1(IO="file", filename="Use1.csv", delimiter="\t")
+
+.decl Def1(?assign:Instruction, ?var:Var)
+.input Def1(IO="file", filename="Def1.csv", delimiter="\t")
+
+
+.decl Use2(?assign:Instruction, ?var:Var)
+.input Use2(IO="file", filename="Use2.csv", delimiter="\t")
+
+.decl Def2(?assign:Instruction, ?var:Var)
+.input Def2(IO="file", filename="Def2.csv", delimiter="\t")
+
+
+.decl compareDef (?ins:Instruction, ?var:Var)
+.decl compareUse (?ins:Instruction, ?var:Var)
+.output compareDef
+.output compareUse
+
+
+compareUse(?ins,?var):-
+    Use1(?ins, ?var),
+    Use2(?ins, ?var),
+    compareDef(_, ?var).
+
+compareDef(?ins,?var):-
+    Def1(?ins, ?var),
+    Def2(?ins, ?var).
