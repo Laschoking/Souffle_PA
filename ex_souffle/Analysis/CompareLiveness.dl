@@ -1,34 +1,68 @@
 .type Var <: symbol
 .type Method <: symbol
 .type Operator <: symbol
-.type Instruction <: symbol
+.type Instruction <: InsType
 .type MethodInv <: symbol
+.type InsType <: symbol
 
 .decl Use1(?assign:Instruction, ?var:Var)
-.input Use1(IO="file", filename="Use1.csv", delimiter="\t")
+.input Use1(IO="file", filename="Use7.csv", delimiter="\t")
 
 .decl Def1(?assign:Instruction, ?var:Var)
-.input Def1(IO="file", filename="Def1.csv", delimiter="\t")
+.input Def1(IO="file", filename="Def7.csv", delimiter="\t")
 
 
 .decl Use2(?assign:Instruction, ?var:Var)
-.input Use2(IO="file", filename="Use2.csv", delimiter="\t")
+.input Use2(IO="file", filename="Use8.csv", delimiter="\t")
 
 .decl Def2(?assign:Instruction, ?var:Var)
-.input Def2(IO="file", filename="Def2.csv", delimiter="\t")
+.input Def2(IO="file", filename="Def8.csv", delimiter="\t")
 
 
-.decl compareDef (?ins:Instruction, ?var:Var)
-.decl compareUse (?ins:Instruction, ?var:Var)
-.output compareDef
-.output compareUse
+.decl CommonDef (?ins:InsType, ?var:Var)
+.decl CommonUse (?ins:InsType, ?var:Var)
+.output CommonDef
+.output CommonUse
+
+.decl ShortenString(ins:Instruction, i:InsType)
+.output ShortenString
+
+.decl InstructionType(ins:Instruction, slice:InsType)
+.output InstructionType
+
+ShortenString(?ins, ?slice):-
+    (Use1(?ins,_);
+    Use2(?ins,_)),
+    match(".*\\d", ?ins),
+    ?len = strlen(?ins),
+    ?len > 1,
+    ?slice = substr(?ins, 0, ?len -1).
+
+ShortenString(?ins, ?moreSlice):-
+    ShortenString(?ins, ?slice),
+    match(".*\\d", ?slice),
+    ?len = strlen(?slice),
+    ?len > 1,
+    ?moreSlice = substr(?slice, 0, ?len -1).
+
+InstructionType(?ins, ?slice):-
+    ShortenString(?ins, ?slice),
+    !match(".*\\d", ?slice).
 
 
-compareUse(?ins,?var):-
-    Use1(?ins, ?var),
-    Use2(?ins, ?var),
-    compareDef(_, ?var).
+CommonUse(?insType,?var):-
+    Use1(?ins1, ?var),
+    Use2(?ins2, ?var),
+    InstructionType(?ins1,?insType),
+    InstructionType(?ins2,?insType),
+    CommonDef(_, ?var).
 
-compareDef(?ins,?var):-
-    Def1(?ins, ?var),
-    Def2(?ins, ?var).
+CommonDef(?insType,?var):-
+    Def1(?ins1, ?var),
+    Def2(?ins2, ?var),
+    InstructionType(?ins1,?insType),
+    InstructionType(?ins2,?insType).
+
+
+// falls Instructionen vertauscht werden, ändert sich Variablenname & Ins
+// start bei einem Punkt & verfolgen der kette?

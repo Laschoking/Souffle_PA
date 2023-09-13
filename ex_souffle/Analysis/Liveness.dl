@@ -3,6 +3,9 @@
 .type Operator <: symbol
 .type Instruction <: symbol
 .type MethodInv <: symbol
+//.type BasicBlock <: Instruction
+//.type InsBB = BasicBlock | Instruction
+
 
 .decl FormalParam(n:number, m:Method, ?param:Var)
 .input FormalParam(IO="file",filename="FormalParam.facts", delimiter="\t")
@@ -13,7 +16,7 @@
 .decl MayPredecessorBBModuloThrow(?inst:Instruction, ?inst1:Instruction)
 .input MayPredecessorBBModuloThrow(IO="file", filename="MayPredecessorBBModuloThrow.csv", delimiter="\t")
 
-.decl AssignInstanceOf(?ins:Instruction, ?l:number, ?from:Var,?to:Var,?s:symbol, ?meth:MethodInv)
+.decl AssignInstanceOf(?ins:Instruction, ?l:number, ?from:Var,?to:Var,?s:symbol, ?meth:Method)
 .input AssignInstanceOf(IO="file", filename="AssignInstanceOf.facts", delimiter="\t")
 
 .decl OptReturnInsn(?ins:Instruction,?meth:Method)
@@ -102,19 +105,19 @@
 .decl ExceptionHandlerFormalParam(?handler:Instruction, ?var:Var)
 .input ExceptionHandlerFormalParam(IO="file", filename="ExceptionHandler-FormalParam.facts", delimiter="\t")
 
-.decl StoreStaticField(?assign:Instruction, ?l:number, ?var:Var, ?to:Var, ?meth:MethodInv)
+.decl StoreStaticField(?assign:Instruction, ?l:number, ?var:Var, ?to:Var, ?meth:Method)
 .input StoreStaticField(IO="file", filename="StoreStaticField.facts", delimiter="\t")
 
-.decl StoreArrayIndex(?assign:Instruction, ?n:number, ?var:Var, ?to:Var, ?m:MethodInv)
+.decl StoreArrayIndex(?assign:Instruction, ?n:number, ?var:Var, ?to:Var, ?m:Method)
 .input StoreArrayIndex(IO="file", filename="StoreArrayIndex.facts", delimiter="\t")
 
-.decl SpecialMethodInvocation(?ins:Instruction, ?l:number, ?s:symbol, ?var:Var,?m:MethodInv)
+.decl SpecialMethodInvocation(?ins:Instruction, ?l:number, ?s:symbol, ?var:Var,?m:Method)
 .input SpecialMethodInvocation(IO="file", filename="SpecialMethodInvocation.facts", delimiter="\t")
 
-.decl Throw(?ins:Instruction, ?l:number, ?var:Var,?m:MethodInv)
+.decl Throw(?ins:Instruction, ?l:number, ?var:Var,?m:Method)
 .input Throw(IO="file", filename="Throw.facts", delimiter="\t")
 
-.decl ExitMonitor(?ins:Instruction, ?l:number,?var:Var, ?m:MethodInv)
+.decl ExitMonitor(?ins:Instruction, ?l:number,?var:Var, ?m:Method)
 .input ExitMonitor(IO="file", filename="ExitMonitor.facts", delimiter="\t")
 
 .decl TableSwitch(?ins:Instruction, ?n:number, ?var:Var, ?meth:Method)
@@ -127,12 +130,12 @@
 
 .output Use
 .output Def
-.output LiveVarInBB
+//.output LiveVarInBB
 .decl UseBB(?assign:Instruction, ?var:Var)
 .decl DefBB(?assign:Instruction, ?var:Var)
 
-.output UseBB
-.output DefBB
+//.output UseBB
+//.output DefBB
 //ExceptionHandler
 
 Use(?assign,?var):-
@@ -300,7 +303,7 @@ OutRel(?BB, ?n -1):-
 DeadVar(?var):-
     !Use(_, ?var),
     Def(_,?var).
-.output DeadVar
+//.output DeadVar
 
 .decl NonInit(?var:Var)
 NonInit(?var):-
@@ -315,3 +318,5 @@ NonInit(?var):-
 //BBHasNoVar(?BB):-
     //MayPredecessorBBModuloThrow(?BB,_),
     //!UseBB(?BB, _).
+
+

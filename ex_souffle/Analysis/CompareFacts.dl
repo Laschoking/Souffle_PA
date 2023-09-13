@@ -1,0 +1,15 @@
+.type Var <: symbol
+.type Method <: symbol
+.type Operator <: symbol
+.type Instruction <: symbol
+.type MethodInv <: symbol
+
+.decl AssignLocal1(?inst:Instruction, ?nr:number,?var1:Var, ?var2:Var, ?method:Method)
+.input AssignLocal1(IO="file", filename="1/AssignLocal.facts", delimiter="\t")
+
+
+.decl AssignLocal2(?inst:Instruction, ?nr:number,?var1:Var, ?var2:Var, ?method:Method)
+.input AssignLocal2(IO="file", filename="2/AssignLocal.facts", delimiter="\t")
+
+
+
