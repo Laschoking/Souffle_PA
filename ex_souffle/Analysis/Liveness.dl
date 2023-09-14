@@ -3,6 +3,7 @@
 .type Operator <: symbol
 .type Instruction <: symbol
 .type MethodInv <: symbol
+.type InsType <: symbol
 //.type BasicBlock <: Instruction
 //.type InsBB = BasicBlock | Instruction
 
@@ -10,71 +11,66 @@
 .decl FormalParam(n:number, m:Method, ?param:Var)
 .input FormalParam(IO="file",filename="FormalParam.facts", delimiter="\t")
 
-.decl StaticMethodInvocation(ins:Instruction, n: number, m:Method, c: symbol)
+.decl StaticMethodInvocation(ins:Instruction, n: number, m:Method, d: Method)
 .input StaticMethodInvocation(IO="file", filename="StaticMethodInvocation.facts", delimiter="\t")
 
 .decl MayPredecessorBBModuloThrow(?inst:Instruction, ?inst1:Instruction)
 .input MayPredecessorBBModuloThrow(IO="file", filename="MayPredecessorBBModuloThrow.csv", delimiter="\t")
 
-.decl AssignInstanceOf(?ins:Instruction, ?l:number, ?from:Var,?to:Var,?s:symbol, ?meth:Method)
+.decl AssignInstanceOf(?ins:Instruction, ?l:number, ?from_var:Var,?to_var:Var,?s:symbol, ?meth:Method)
 .input AssignInstanceOf(IO="file", filename="AssignInstanceOf.facts", delimiter="\t")
 
-.decl OptReturnInsn(?ins:Instruction,?meth:Method)
-.input OptReturnInsn(IO="file", filename="OptReturnInsn.csv", delimiter="\t")
 
-.decl BasicBlockHead(?inst:Instruction, ?ins:Instruction)
-.input BasicBlockHead(IO="file", filename="BasicBlockHead.csv", delimiter="\t")
-
-.decl AssignBinop(?instruction:Instruction, ?index:number, ?to:Var, ?inmethod:Method)
+.decl AssignBinop(?instruction:Instruction, ?index:number, ?to_var:Var, ?inmethod:Method)
 .input AssignBinop(IO="file", filename="AssignBinop.facts", delimiter="\t")
 
-.decl AssignCast(?instruction:Instruction, ?index:number, ?from:Var, ?to:Var, ?type:symbol, ?inmethod:Method)
+.decl AssignCast(?instruction:Instruction, ?index:number, ?from_var:Var, ?to_var:Var, ?type:symbol, ?inmethod:Method)
 .input AssignCast(IO="file", filename="AssignCast.facts", delimiter="\t")
 
-.decl AssignCastNull(?instruction:Instruction, ?index:number, ?to:Var, ?type:symbol, ?method:Method)
+.decl AssignCastNull(?instruction:Instruction, ?index:number, ?to_var:Var, ?type:symbol, ?method:Method)
 .input AssignCastNull(IO="file", filename="AssignCastNull.facts", delimiter="\t")
 
-.decl AssignCastNumConstant(?instruction:Instruction, ?index:number, ?const:symbol, ?to:Var, ?type:symbol, ?inmethod:Method)
+.decl AssignCastNumConstant(?instruction:Instruction, ?index:number, ?const:symbol, ?to_var:Var, ?type:symbol, ?inmethod:Method)
 .input AssignCastNumConstant(IO="file", filename="AssignCastNumConstant.facts", delimiter="\t")
 
 
-.decl AssignHeapAllocation(?instruction:Instruction, ?index:number, ?heap:symbol, ?to:Var, ?inmethod:Method, ?linenumber:number)
+.decl AssignHeapAllocation(?instruction:Instruction, ?index:number, ?heap:symbol, ?to_var:Var, ?inmethod:Method, ?linenumber:number)
 .input AssignHeapAllocation(IO="file", filename="AssignHeapAllocation.facts", delimiter="\t")
 
 
-//.decl AssignInstanceOf(?instruction:Instruction, ?index:number, ?from:Var, ?to:Var, ?type:symbol, ?inmethod:Method)
+//.decl AssignInstanceOf(?instruction:Instruction, ?index:number, ?from_var:Var, ?to_var:Var, ?type:symbol, ?inmethod:Method)
 
-.decl AssignLocal(?instruction:Instruction, ?index:number, ?from:Var, ?to:Var, ?inmethod:Method)
+.decl AssignLocal(?instruction:Instruction, ?index:number, ?from_var:Var, ?to_var:Var, ?inmethod:Method)
 .input AssignLocal(IO="file", filename="AssignLocal.facts", delimiter="\t")
 
 .decl ArrayAllocation(?ins:Instruction, ?n:number, ?var:Var)
 .input ArrayAllocation(IO="file", filename="ArrayAllocation.facts", delimiter="\t")
 
-.decl AssignNull(?instruction:Instruction, ?index:number, ?to:Var, ?method:Method)
+.decl AssignNull(?instruction:Instruction, ?index:number, ?to_var:Var, ?method:Method)
 .input AssignNull(IO="file", filename="AssignNull.facts", delimiter="\t")
 
-.decl AssignNumConstant(?instruction:Instruction, ?index:number, ?const:symbol, ?to:Var, ?inmethod:Method)
+.decl AssignNumConstant(?instruction:Instruction, ?index:number, ?const:symbol, ?to_var:Var, ?inmethod:Method)
 .input AssignNumConstant(IO="file", filename="AssignNumConstant.facts", delimiter="\t")
 
-.decl AssignOperFrom(?instruction:Instruction, ?pos: number, ?from:Var)
+.decl AssignOperFrom(?instruction:Instruction, ?pos: number, ?from_var:Var)
 .input AssignOperFrom(IO="file", filename="AssignOperFrom.facts", delimiter="\t")
 
-.decl AssignOperFromConstant(?instruction:Instruction, ?pos: number, ?from:symbol)
+.decl AssignOperFromConstant(?instruction:Instruction, ?pos: number, ?from_var:symbol)
 .input AssignOperFromConstant(IO="file", filename="AssignOperFromConstant.facts", delimiter="\t")
 
 .decl AssignPhantomInvoke(?instruction:Instruction, ?index:number, ?method:Method)
 .input AssignPhantomInvoke(IO="file", filename="AssignPhantomInvoke.facts", delimiter="\t")
 
-.decl AssignUnop(?instruction:Instruction, ?index:number, ?to:Var, ?inmethod:Method)
+.decl AssignUnop(?instruction:Instruction, ?index:number, ?to_var:Var, ?inmethod:Method)
 .input AssignUnop(IO="file", filename="AssignUnop.facts", delimiter="\t")
 
-.decl LoadArrayIndex(?instruction:Instruction, ?index:number, ?to:Var, ?base:Var, ?method:Method)
+.decl LoadArrayIndex(?instruction:Instruction, ?index:number, ?to_var:Var, ?base:Var, ?method:Method)
 .input LoadArrayIndex(IO="file", filename="LoadArrayIndex.facts", delimiter="\t")
 
-.decl LoadInstanceField(?instruction:Instruction, ?index:number, ?to:Var, ?base:Var, ?signature:symbol, ?method:Method)
+.decl LoadInstanceField(?instruction:Instruction, ?index:number, ?to_var:Var, ?base:Var, ?signature:symbol, ?method:Method)
 .input LoadInstanceField(IO="file", filename="LoadInstanceField.facts", delimiter="\t")
 
-.decl LoadStaticField(?instruction:Instruction, ?index:number, ?to:Var, ?signature:symbol, ?method:Method)
+.decl LoadStaticField(?instruction:Instruction, ?index:number, ?to_var:Var, ?signature:symbol, ?method:Method)
 .input LoadStaticField(IO="file", filename="LoadStaticField.facts", delimiter="\t")
 
 .decl Method_FirstInstruction(?method:Method, ?insn:Instruction)
@@ -84,31 +80,34 @@
 .input ActualParam(IO="file", filename="ActualParam.facts", delimiter="\t")
 
 //auch base -> Use möglich, aber da static field ex. vmtl keine echte Variable
-.decl AssignReturnValue(?assign:Instruction, ?var:Var)
+.decl AssignReturnValue(?ins:Instruction, ?var:Var)
 .input AssignReturnValue(IO="file", filename="AssignReturnValue.facts", delimiter="\t")
 
-.decl VirtualMethodInvocation(?assign:Instruction, ?nr:number, ?method:Method, ?var:Var, ?m:Method)
+.decl VirtualMethodInvocation(?ins:Instruction, ?nr:number, ?method:Method, ?var:Var, ?m:Method)
 .input VirtualMethodInvocation(IO="file", filename="VirtualMethodInvocation.facts", delimiter="\t")
 
 .decl IfVar(?instr:Instruction, ?n: number, ?var:Var)
 .input IfVar(IO="file", filename="IfVar.facts", delimiter="\t")
 
-.decl Return(?assign:Instruction, ?n:number, ?var:Var, ?m:Method)
+.decl Return(?ins:Instruction, ?n:number, ?var:Var, ?m:Method)
 .input Return(IO="file", filename="Return.facts", delimiter="\t")
 
-.decl StoreInstanceField(?instruction:Instruction, ?index:number, ?from:Var, ?base:Var, ?signature:symbol, ?method:symbol)
+.decl StoreInstanceField(?instruction:Instruction, ?index:number, ?from_var:Var, ?base:Var, ?signature:symbol, ?method:Method)
 .input StoreInstanceField(IO="file",filename="StoreInstanceField.facts", delimiter="\t")
 
 .decl ArrayInsnIndex(?ins:Instruction, ?var:Var)
 .input ArrayInsnIndex(IO="file",filename="ArrayInsnIndex.facts", delimiter="\t")
 
+.decl ExceptionHandler(?handler:symbol, ?method:Method)
+.input ExceptionHandler(IO="file", filename="ExceptionHandler.facts")
+
 .decl ExceptionHandlerFormalParam(?handler:Instruction, ?var:Var)
 .input ExceptionHandlerFormalParam(IO="file", filename="ExceptionHandler-FormalParam.facts", delimiter="\t")
 
-.decl StoreStaticField(?assign:Instruction, ?l:number, ?var:Var, ?to:Var, ?meth:Method)
+.decl StoreStaticField(?ins:Instruction, ?l:number, ?var:Var, ?to_var:Var, ?meth:Method)
 .input StoreStaticField(IO="file", filename="StoreStaticField.facts", delimiter="\t")
 
-.decl StoreArrayIndex(?assign:Instruction, ?n:number, ?var:Var, ?to:Var, ?m:Method)
+.decl StoreArrayIndex(?ins:Instruction, ?n:number, ?var:Var, ?to_var:Var, ?m:Method)
 .input StoreArrayIndex(IO="file", filename="StoreArrayIndex.facts", delimiter="\t")
 
 .decl SpecialMethodInvocation(?ins:Instruction, ?l:number, ?s:symbol, ?var:Var,?m:Method)
@@ -125,198 +124,157 @@
 
 .decl LookupSwitch(?ins:Instruction, ?n:number, ?var:Var, ?meth:Method)
 .input LookupSwitch(IO="file", filename="LookupSwitch.facts", delimiter="\t")
-.decl Use(?assign:Instruction, ?var:Var)
-.decl Def(?assign:Instruction, ?var:Var)
+
+.decl Var_DeclaringMethod(?var:Var, ?m:Method)
+.input Var_DeclaringMethod(IO="file", filename="Var-DeclaringMethod.facts")
+
+
+
+.decl InterproceduralDefUse(?from_meth:Method, ?from_type:InsType, ?from_ins:Instruction, ?from_var:Var, ?to_meth:Method,?to_type:InsType, ?to_ins:Instruction, ?to_var:Var)
+.output InterproceduralDefUse
+
+.decl Use(?m:Method, ?t:InsType, ?ins:Instruction, ?var:Var)
+
+.decl Def(?m:Method, ?t:InsType,?ins:Instruction, ?var:Var)
 
 .output Use
 .output Def
-//.output LiveVarInBB
-.decl UseBB(?assign:Instruction, ?var:Var)
-.decl DefBB(?assign:Instruction, ?var:Var)
+
 
 //.output UseBB
 //.output DefBB
-//ExceptionHandler
 
-Use(?assign,?var):-
-    LookupSwitch(?assign,_, ?var,_).
+Use(?method,"LookupSwitch", ?ins,?var):-
+    LookupSwitch(?ins,_, ?var,?method).
 
-Use(?assign,?var):-
-    TableSwitch(?assign,_,?var,_).
+Use(?method, "TableSwitch",?ins, ?var):-
+    TableSwitch(?ins,_,?var,?method).
 
-Use(?assign,?var):-
-    ExitMonitor(?assign,_,?var,_).
-Use(?assign,?var):-
-    Throw(?assign,_,?var,_).
+Use(?method,"ExitMonitor", ?ins,?var):-
+    ExitMonitor(?ins,_,?var,?method).
 
-Use(?assign,?var):- 
-    SpecialMethodInvocation(?assign,_,_,?var,_).
+Use(?method,"Throw", ?ins,?var):-
+    Throw(?ins,_,?var,?method).
 
-Def(?assign, ?to),
-Use(?assign,?from):-
-    StoreArrayIndex(?assign,_, ?from, ?to, _).
+Use(?method,"SpecialMethodInvocation",?ins,?var):- 
+    SpecialMethodInvocation(?ins,_,_,?var,?method).
+
+Def(?method,"StoreArrayIndex", ?ins, ?to_var),
+Use(?method,"StoreArrayIndex", ?ins,?from_var):-
+    StoreArrayIndex(?ins,_, ?from_var, ?to_var, ?method).
 
 
-Use(?assign,?from):-
-    StoreStaticField(?assign,_,?from, _, _).
+Use(?method,"StoreStaticField", ?ins,?from_var):-
+    StoreStaticField(?ins,_,?from_var, _, ?method).
 
-Def(?assign,?var):-
-    ExceptionHandlerFormalParam(?assign,?var).
-Use(?assign,?from),
-Def(?assign,?to):-
-    AssignInstanceOf(?assign, _,?from, ?to,_, _).
+Def(?method,"ExceptionHandlerFormalParam", ?ins,?var):-
+    ExceptionHandlerFormalParam(?ins,?var),
+    ExceptionHandler(?ins,?method).
 
-Use(?assign,?var):-
-    ArrayInsnIndex(?assign,?var).
 
-Use(?assign,?var):-
-    ArrayAllocation(?assign,_,?var).
+Use(?method,"AssignInstanceOf", ?ins,?from_var),
+Def(?method,"AssignInstanceOf", ?ins,?to_var):-
+    AssignInstanceOf(?ins, _,?from_var, ?to_var,_, ?method).
 
-Def(?assign, ?to):-
-    AssignBinop(?assign, _, ?to, _).
+Use(?method,"ArrayInsnIndex", ?ins,?var):-
+    ArrayInsnIndex(?ins,?var),
+    Var_DeclaringMethod(?var,?method).
 
-Use(?assign, ?right_oper):-
-    AssignOperFrom(?assign,_ ,?right_oper).
+Use(?method,"ArrayAllocation", ?ins,?var):-
+    ArrayAllocation(?ins,_,?var),
+    Var_DeclaringMethod(?var,?method).
 
-Def(?assign, ?to):-
-    AssignBinop(?assign, _, ?to, _),
-    AssignOperFromConstant(?assign,_ ,_).
+Def(?method,"AssignLocal", ?ins, ?to_var):-
+    AssignBinop(?ins, _, ?to_var, ?method).
 
-Use(?assign, ?from),
-Def(?assign, ?to):-
-    AssignCast(?assign, _, ?from, ?to, _ ,_).
+Use(?method,"AssignLocal", ?ins, ?right_oper):-
+    AssignOperFrom(?ins,_ ,?right_oper),
+    Var_DeclaringMethod(?right_oper, ?method).
+//fuegt ggf. Duplikat hinzu, falls z.b. x = y + 1
+Def(?method,"AssignLocal", ?ins, ?to_var):-
+    AssignBinop(?ins, _, ?to_var, ?method),
+    AssignOperFromConstant(?ins,_ ,_).
 
-Def(?assign, ?to):-
-    AssignCastNull(?assign, _, ?to, _ ,_).
+Use(?method,"AssignCast", ?ins, ?from_var),
+Def(?method,"AssignCast", ?ins, ?to_var):-
+    AssignCast(?ins, _, ?from_var, ?to_var, _ ,?method).
 
-Def(?assign, ?to):-
-    AssignCastNumConstant(?assign,_, _,?to,_,_).
+Def(?method,"AssignCastNull", ?ins, ?to_var):-
+    AssignCastNull(?ins, _, ?to_var, _ , ?method).
 
-Def(?assign, ?to):-
-    AssignHeapAllocation(?assign, _,_,?to, _, _ ).
+Def(?method,"AssignCastNumConstant", ?ins, ?to_var):-
+    AssignCastNumConstant(?ins,_, _,?to_var,_,?method).
+
+Def(?method,"AssignHeapAllocation", ?ins, ?to_var):-
+    AssignHeapAllocation(?ins, _,_,?to_var, ?method,_ ).
     
 //InstanceOf
 
-Use(?assign, ?from),
-Def(?assign, ?to):-
-    AssignLocal(?assign, _, ?from, ?to, _).
+Use(?method,"AssignLocal", ?ins, ?from_var),
+Def(?method,"AssignLocal", ?ins, ?to_var):-
+    AssignLocal(?ins, _, ?from_var, ?to_var, ?method).
+
+Def(?method,"AssignNull", ?ins, ?to_var):-
+    AssignNull(?ins, _ ,?to_var, ?method).
+
+Def(?method,"AssignNumConstant", ?ins, ?to_var):-
+    AssignNumConstant(?ins,_,_,?to_var,?method).
+
+Use(?method,"LoadArrayIndex", ?ins, ?base),
+Def(?method,"LoadArrayIndex", ?ins,?to_var):-
+    LoadArrayIndex(?ins,_, ?to_var, ?base, ?method).
+
+Use(?method,"LoadInstanceField", ?ins, ?base),
+Def(?method,"LoadInstanceField", ?ins, ?to_var):-
+    LoadInstanceField(?ins, _, ?to_var, ?base,_ , ?method).
+
+Def(?method,"AssignUnop", ?ins, ?to_var):-
+    AssignUnop(?ins,_, ?to_var, ?method).
+
+Def(?method,"LoadStaticField", ?ins, ?to_var):-
+    LoadStaticField(?ins, _, ?to_var, _, ?method).
+
+// handle paramter assignment foo(a) so a is used and internal variable parameter0 is defined
+//from = callee, to = called function
+InterproceduralDefUse(?from_meth, "AssignMethodParameter", ?from_ins, ?from_var, ?to_meth, "AssignMethodParameter", ?from_ins, ?to_var),
+Use(?to_meth,"AssignMethodParameter", ?from_ins, ?from_var),
+Def(?to_meth,"AssignMethodParameter", ?from_ins, ?to_var) :-
+    ActualParam(?pos, ?from_ins, ?from_var),
+    StaticMethodInvocation(?from_ins, _, ?to_meth, ?from_meth),
+    FormalParam(?pos, ?to_meth, ?to_var).
+
+// if the parameters are used, the value is copied to the actual variable
+// i.e. foo(integer a) -> defines a
+Use(?to_meth, "AssignLocal", ?to_ins, ?from_var),
+Def(?to_meth, "AssignLocal",?to_ins, ?to_var):-
+    AssignLocal(?to_ins, _, ?from_var, ?to_var, ?to_meth),
+    Def(_ , "AssignMethodParameter", _, ?from_var).
+
+Use(?method,"VirtualMethodInvocation", ?ins,?from_var):-
+    VirtualMethodInvocation(?ins, _ ,_, ?from_var, ?method).
+
+Use(?method,"IfVar", ?ins,?from_var):-
+    IfVar(?ins,_,?from_var),
+    Var_DeclaringMethod(?from_var,?method).
 
 
-Use(?assign, ?from),
-Def(?assign, ?to):-
-    AssignLocal(?assign, _, ?from, ?to, _).
-
-Def(?assign, ?to):-
-    AssignNull(?assign, _ ,?to, _).
-
-Def(?assign, ?to):-
-    AssignNumConstant(?assign,_,_,?to,_).
-
-Use(?assign, ?base),
-Def(?assign,?to):-
-    LoadArrayIndex(?assign,_, ?to, ?base, _).
-
-Use(?assign, ?base),
-Def(?assign, ?to):-
-    LoadInstanceField(?assign, _, ?to, ?base,_ , _).
-
-Def(?assign, ?to):-
-    AssignUnop(?assign,_, ?to,_).
-
-UseBB(?BB,?var):-
-    Use(?assign,?var),
-    BasicBlockHead(?assign, ?BB).
-
-UseBB(?assign,?var):-
-    Use(?assign,?var),
-    Method_FirstInstruction(_, ?assign).
-
-DefBB(?BB,?var):-
-    Def(?assign,?var),
-    BasicBlockHead(?assign, ?BB).
-
-DefBB(?assign,?var):-
-    Def(?assign,?var),
-    Method_FirstInstruction(_, ?assign).
-
-Def(?assign, ?to):-
-    LoadStaticField(?assign, _, ?to, _, _).
-
-Use(?call_ins, ?from),
-Use(?assign,?from):-
-    ActualParam(?pos,?assign, ?from),
-    StaticMethodInvocation(?assign, _, ?call_method, _),
-    FormalParam(?pos, ?call_method, ?param),
-    AssignLocal(?call_ins, _, ?param,_ , ?call_method).
+// handle the return of variable values at the end of a function call
+InterproceduralDefUse(?from_meth,"Return" , ?from_ins,  ?from_var, ?to_meth, "AssignReturnValue", ?to_ins, ?to_var),
+Def(?to_meth,"AssignReturnValue", ?to_ins, ?to_var),
+Use(?to_meth,"AssignReturnValue", ?to_ins, ?from_var):-
+    Return(?from_ins,_, ?from_var, ?from_meth),
+    AssignReturnValue(?to_ins, ?to_var),
+    StaticMethodInvocation(?to_ins, _, ?from_meth, ?to_meth).
 
 
-Def(?assign, ?to):-
-    AssignReturnValue(?assign, ?to).
 
-Use(?assign,?from):-
-    VirtualMethodInvocation(?assign, _ ,_, ?from, _).
-
-Use(?assign,?from):-
-    IfVar(?assign,_,?from).
-
-Use(?assign,?from):-
-    Return(?assign,_,?from,_).
-
-Use(?call_ins, ?from):-
-    Return(_,_, ?from, ?call_meth),
-    StaticMethodInvocation(?call_ins, _, ?call_meth, _).
-
-Use(?assign,?to),
-Def(?assign,?to),
-Use(?assign,?from):-
-    StoreInstanceField(?assign,_,?from,?to,_,_).
-
-.decl LiveVarInBB(?BB:Instruction, ?var:Var)
-//.decl BBHasNoVar(?ins:Instruction)
-.decl AllBB(?BB:Instruction)
-.output AllBB
-
-AllBB(?BB):-
-    MayPredecessorBBModuloThrow(?BB, _);
-    MayPredecessorBBModuloThrow(_,?BB).
-
-LiveVarInBB(?BB, ?var):-
-    UseBB(?BB, ?var).
-
-LiveVarInBB(?BB, "eps"):-
-    AllBB(?BB),
-    !UseBB(?BB, _).
-
-LiveVarInBB(?BB1, ?var2):-
-    LiveVarInBB(?BB2, ?var2),
-    !DefBB(?BB2, ?var2),
-    MayPredecessorBBModuloThrow(?BB1, ?BB2).
+Use(?method,"StoreInstanceField", ?ins,?to_var),
+Def(?method,"StoreInstanceField", ?ins,?to_var),
+Use(?method,"StoreInstanceField", ?ins,?from_var):-
+    StoreInstanceField(?ins,_,?from_var,?to_var,_,?method).
 
 
-.decl OutRel(?BB:Instruction, ?n:number)
 
-OutRel(?BB, ?n -1):-
-    AllBB(?BB),
-    ?n = count : {LiveVarInBB(?BB, _)}.
-.decl DeadVar(?var:Var)
-
-DeadVar(?var):-
-    !Use(_, ?var),
-    Def(_,?var).
-//.output DeadVar
-
-.decl NonInit(?var:Var)
-NonInit(?var):-
-    Use(_,?var),
-    !Def(_,?var).
-.output NonInit
-
-//LiveVarInBB(?BB, ?var):-
-//    OptReturnInsn(?return,_),
-//    BasicBlockHead(?return, ?BB),
-//    UseBB(?BB, ?var).
-//BBHasNoVar(?BB):-
-    //MayPredecessorBBModuloThrow(?BB,_),
-    //!UseBB(?BB, _).
+// ggf. vereinfachung, d.h. AssignBinop etc zu
 
 

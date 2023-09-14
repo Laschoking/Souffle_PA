@@ -19,36 +19,28 @@
 .input Def2(IO="file", filename="Def8.csv", delimiter="\t")
 
 //type can  be either AssignMethodParameter or AssignReturnValue
-.decl InterproceduralDefUse1(?from_meth:Method, ?from_type:InsType, ?from_ins:Instruction, ?from_var:Var, ?to_meth:Method,?to_type:InsType, ?to_ins:Instruction, ?to_var:Var)
+.decl InterproceduralDefUse1(type:InsType, ?called_meth:Method,  ?called_ins:Instruction, ?from_var:Var, ?callee_meth:Method, ?callee_ins:Instruction, ?to_var:Var)
 .input InterproceduralDefUse1(IO="file", filename="InterproceduralDefUse7.csv")
 
-.decl DataDep1(?meth:Method, ?type1:InsType, ?var1:Var, ?type2:InsType,?var2:Var)
+.decl DataDep1(?meth:Method, ?ins1:Instruction, ?type1:InsType, ?var1:Var, ?ins2:Instruction, ?type2:InsType, ?var2:Var)
 .output DataDep1 
 
-.decl RootNodes1(?meth:Method, ?type:InsType, ?var:Var)
+.decl RootNodes1(?meth:Method, ?ins1:Instruction, ?type:InsType, ?var:Var)
 .output RootNodes1
-RootNodes1(?meth, ?type1, ?var1):-
-    DataDep1(?meth, ?type1,?var1, _, _),
-    !DataDep1(_ , _, _,_,?var1).
+RootNodes1(?meth,?ins1, ?type1, ?var1):-
+    DataDep1(?meth,?ins1,?type1, ?var1, _, _, _),
+    !DataDep1(_ , _, _, _, _,_, ?var1).
 
-DataDep1(?meth,?type1,?var1,  ?type2, ?var2):-
-    Def1(?meth,?type1, _ , ?var1),
+DataDep1(?meth,?ins1, ?type1,  ?var1, ?ins2, ?type2, ?var2):-
+    Def1(?meth,?type1, ?ins1, ?var1),
     Use1(?meth,?type2, ?ins2, ?var1),
     Def1(?meth,?type2, ?ins2 , ?var2).
 
-DataDep1("Interprocedural", ?from_type, ?from_var, ?to_type, ?to_var):-
-    InterproceduralDefUse1(_,?from_type, _, ?from_var, ?to_meth, ?to_type, ?to_ins, ?to_var),
-    Use1(?to_meth, ?to_type, ?to_ins, ?from_var),
-    Def1(?to_meth, ?to_type, ?to_ins, ?to_var).
+DataDep1(?meth,?to_ins,?to_type,?to_param, ?ins,?type, ?var):-
+    InterproceduralDefUse1(?to_type, _, _, _ , ?meth, ?to_ins, ?to_param),
+    Use1(?meth, ?type, ?ins, ?to_param),
+    Def1(?meth, ?type, ?ins, ?var).
 
-// the assignment of function parameters does not have an own instruction
-// they are just here 
-// so we say that they are created in the calling function
-
-
-
-// Bei DEF wird immer eine Variable definiert, aber ggf. keine Verwendet
-// Bei USE wird immer eine Variable verwendet, aber ggf. keine neue erzeugt
 
 
 // falls Instructionen vertauscht werden, ändert sich Variablenname & Ins
