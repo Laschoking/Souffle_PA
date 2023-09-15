@@ -27,6 +27,15 @@
 
 .decl RootNodes1(?meth:Method, ?type:InsType, ?var:Var)
 .output RootNodes1
+
+.decl VarMeth1(var:Var, meth:Method)
+.output VarMeth1
+
+.decl VarDep1(?var1:Var, ?var2:Var)
+.output VarDep1
+
+VarMeth1(?var,?meth):-
+    Def1(?meth,_,_,?var).
 RootNodes1(?meth, ?type1, ?var1):-
     DataDep1(?meth, ?type1,?var1, _, _),
     !DataDep1(_ , _, _,_,?var1).
@@ -40,6 +49,9 @@ DataDep1("Interprocedural", ?from_type, ?from_var, ?to_type, ?to_var):-
     InterproceduralDefUse1(_,?from_type, _, ?from_var, ?to_meth, ?to_type, ?to_ins, ?to_var),
     Use1(?to_meth, ?to_type, ?to_ins, ?from_var),
     Def1(?to_meth, ?to_type, ?to_ins, ?to_var).
+
+VarDep1(?var1, ?var2):-
+    DataDep1(_,_,?var1,_,?var2).
 
 // the assignment of function parameters does not have an own instruction
 // they are just here 
