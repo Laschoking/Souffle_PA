@@ -14,8 +14,8 @@ from collections import deque
 
 #name = "sample-program-changed"
 prefix = "/home/kotname/Documents/Diplom/Code/ex_souffle/out/Liveness/vgl7_8"
-DD_file = prefix  + "/VarDep1.csv"
-Method_file = prefix + "/VarMeth1.csv"
+DD_file = prefix  + "/VarDep2.csv"
+Method_file = prefix + "/VarMeth2.csv"
 
 def normalizeString(node):
     if node.__contains__(":"):
@@ -80,9 +80,9 @@ if __name__== "__main__":
     nx.draw_networkx_edges(G, pos, edge_color=edge_col, arrowsize=30,node_size=450, width=2, alpha=0.9)
     nx.draw_networkx_labels(G,pos,bbox=dict(facecolor = "skyblue"), font_size=12)
 
-    plt.savefig("VarDependencies1.png")
+    #plt.savefig("VarDependencies7.png")
     plt.show()
 
     #nx.draw_networkx_nodes(G,pos,,node_size=500, node_shape='o')
-#, edge_color=edge_col
+    #, edge_color=edge_col
     # set defaults

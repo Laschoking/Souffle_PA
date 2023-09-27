@@ -59,7 +59,6 @@
 // .output MainMethodArgArrayContent
 .type Instruction = symbol
 .decl Instruction_Method(?insn:Instruction, ?inMethod:Method)
-// .output Instruction_Method
 .type FieldInstruction = Instruction
 .type LoadInstanceField_Insn = FieldInstruction
 .type StoreInstanceField_Insn = FieldInstruction
@@ -634,3 +633,6 @@ VarPointsTo(?heap, ?this) :-
  .plan 1:(4,3,2,1,5,6)
 Reachable(?method) :-
   basic.MainMethodDeclaration(?method).
+
+
+.output Instruction_Method
