@@ -1,0 +1,52 @@
+.type Var <: symbol
+.type Method <: symbol
+.type Operator <: symbol
+.type Instruction <: InsType
+.type MethodInv <: symbol
+.type InsType <: symbol
+
+.decl Use1(?meth:Method ,?type:InsType, ?ins:Instruction, ?var:Var)
+.input Use1(IO="file", filename="Use7.csv", delimiter="\t")
+
+.decl Def1(?meth:Method,?type:InsType, ?ins:Instruction, ?var:Var)
+.input Def1(IO="file", filename="Def7.csv", delimiter="\t")
+
+
+.decl Use2(?meth:Method ,?type:InsType, ?ins:Instruction, ?var:Var)
+.input Use2(IO="file", filename="Use8.csv", delimiter="\t")
+
+.decl Def2(?meth:Method ,?type:InsType, ?ins:Instruction, ?var:Var)
+.input Def2(IO="file", filename="Def8.csv", delimiter="\t")
+
+//type can  be either AssignMethodParameter or AssignReturnValue
+.decl InterproceduralDefUse1(type:InsType, ?called_meth:Method,  ?called_ins:Instruction, ?from_var:Var, ?callee_meth:Method, ?callee_ins:Instruction, ?to_var:Var)
+.input InterproceduralDefUse1(IO="file", filename="InterproceduralDefUse7.csv")
+
+.decl DataDep1(?meth:Method, ?ins1:Instruction, ?type1:InsType, ?var1:Var, ?ins2:Instruction, ?type2:InsType, ?var2:Var)
+.output DataDep1 
+
+.decl RootNodes1(?meth:Method, ?ins1:Instruction, ?type:InsType, ?var:Var)
+.output RootNodes1
+RootNodes1(?meth,?ins1, ?type1, ?var1):-
+    DataDep1(?meth,?ins1,?type1, ?var1, _, _, _),
+    !DataDep1(_ , _, _, _, _,_, ?var1).
+
+DataDep1(?meth,?ins1, ?type1,  ?var1, ?ins2, ?type2, ?var2):-
+    Def1(?meth,?type1, ?ins1, ?var1),
+    Use1(?meth,?type2, ?ins2, ?var1),
+    Def1(?meth,?type2, ?ins2 , ?var2).
+
+DataDep1(?meth,?to_ins,?to_type,?to_param, ?ins,?type, ?var):-
+    InterproceduralDefUse1(?to_type, _, _, _ , ?meth, ?to_ins, ?to_param),
+    Use1(?meth, ?type, ?ins, ?to_param),
+    Def1(?meth, ?type, ?ins, ?var).
+
+
+
+// falls Instructionen vertauscht werden, ändert sich Variablenname & Ins
+// start bei einem Punkt & verfolgen der kette?
+
+// call mit parametern / ohne ist immer staticInvoke
+// obj.foo wäre virtualInvoke 
+// obj.init specialInvoke
+// ob  Rückgabewert existiert hängt von Formal / Actual parameter ab

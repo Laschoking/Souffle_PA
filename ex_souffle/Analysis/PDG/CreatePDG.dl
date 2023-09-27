@@ -1,0 +1,259 @@
+#include "Liveness.dl"
+
+
+.decl OptInstructionFromMethodIndex(?method:Method, ?insNr:number, ?varAssign:Instruction)
+.input OptInstructionFromMethodIndex(IO="file", filename="OptInstructionFromMethodIndex.csv", delimiter="\t")
+
+
+.decl NextNonDomPredecessorIndexToSameBB(?ass:Instruction, ?ass1:Instruction, ?ass2:Instruction)
+.input NextNonDomPredecessorIndexToSameBB(IO="file", filename="NextNonDomPredecessorIndexToSameBB.csv", delimiter="\t")
+
+
+.decl If(?ifNode:Instruction, ?lineNr:number, ?jump:number, ?method:Method)
+.input If(IO="file", filename="If.facts", delimiter="\t")
+
+.decl PhiNodeHead(?insn:Instruction, ?headInsn:Instruction)
+.input PhiNodeHead(IO="file", filename="PhiNodeHead.csv", delimiter="\t")
+
+.decl Dominates(?dominator:Instruction, ?insn:Instruction)
+.input Dominates(IO="file", filename="Dominates.csv", delimiter="\t")
+
+.decl BasicBlockBegin(?ass:Instruction)
+.input BasicBlockBegin(IO="file", filename="BasicBlockBegin.csv", delimiter="\t")
+
+.decl BasicBlockTail(?bb:Instruction, ?tail:Instruction)
+.input BasicBlockTail(IO="file", filename="BasicBlockTail.csv", delimiter="\t")
+
+
+//.decl Def(ins :Instruction, var: Var)
+//.input Def(IO="file", filename="Def.csv", delimiter="\t")
+
+
+//.decl Use(BB1 :Instruction, var: Var)
+//.input Use(IO="file", filename="Use.csv", delimiter="\t")
+//.output Use
+
+.decl ControlDepBB(m:Method, BB1 :Instruction, BB2 :Instruction)
+.output ControlDepBB
+
+
+.decl ControlDep(m:Method,ins : Instruction, ins2 : Instruction)
+.output ControlDep
+
+
+.decl DataDep(m:Method,ins1 : Instruction, ins2 : Instruction)
+.output DataDep
+
+.decl NrOfSuccBB(BB:Instruction, c: number)
+//.output NrOfSuccBB
+//.output NextNonDomPredecessorIndexToSameBB
+
+.decl SuccessorBB(BB1:Instruction, BB2:Instruction)
+//.output SuccessorBB
+
+.decl LinkBBToNew(?BB2: Instruction, ?BB1:Instruction)
+//.output LinkBBToNew
+// component DEF / USE
+// inverse domination
+
+.decl DominatesItsPredecessorInstruction(ins: Instruction, dom:Instruction)
+.input DominatesItsPredecessorInstruction(IO="file", filename="DominatesItsPredecessorInstruction.csv", delimiter="\t")
+
+.decl NonStrictPostDom(ins:Instruction, BB1:Instruction)
+//.output NonStrictPostDom
+
+.decl StrictPostDom(ins:Instruction, BB1:Instruction)
+//.output StrictPostDom
+
+
+.decl ReturnVoid(ins: Instruction, n:number, m:Method)
+.input ReturnVoid(IO="file", filename="ReturnVoid.facts", delimiter="\t")
+
+// copied from dependency analysis
+
+.decl BBHeadInMethod(ins:Instruction, m:Method)
+.input BBHeadInMethod(IO="file", filename="BBHeadInMethod.csv", delimiter="\t")
+//.output BBHeadInMethod
+
+.decl CFGLeaf(?headInsn:Instruction, ?method: Method)
+//.output CFGLeaf
+
+.decl DoesNotPostDominate(?postDomCandidate: Instruction, ?insn: Instruction)
+//.output DoesNotPostDominate
+
+.decl PDGNodes(m:Method, ins: Instruction, n: number)
+.output PDGNodes
+
+.decl PostDominates(?dominator:Instruction, ?getPDBB:Instruction)
+//.output PostDominates
+
+.decl SameMethodBBHeads(?insn1:Instruction, ?insn2:Instruction)
+//.output SameMethodBBHeads
+
+
+.decl NodeStats(?m:Method, ?node:Instruction, ?in_dd:number,?out_dd:number,?in_cd:number,?out_cd:number)
+.output NodeStats
+// kuerzen der Statements s.d. Zeilennummern verschwinden
+.decl FunctionSignature(f:Method, ?n:number, ?in_dd:number,?out_dd:number,?in_cd:number,?out_cd:number,?s:Instruction)
+.output FunctionSignature
+
+
+
+SameMethodBBHeads(?BB1, ?BB2) :-
+   BBHeadInMethod(?insn1, ?method),
+   BBHeadInMethod(?insn2, ?method),
+   BasicBlockHead(?insn1, ?x1),
+   LinkBBToNew(?x1, ?BB1),
+   BasicBlockHead(?insn2, ?x2),
+   LinkBBToNew(?x2, ?BB2).
+
+CFGLeaf(?BB, ?method) :-
+    Throw(?insn, _,_,?method),
+    BasicBlockHead(?insn, ?BB).
+
+/* An instruction is a CFG leaf if it ends with a return */
+CFGLeaf(?BB, ?method) :-
+    (Return(?ins, _, _, ?method);
+    ReturnVoid(?ins, _, ?method)),
+    BasicBlockHead(?ins, ?x),
+    LinkBBToNew(?x, ?BB).
+
+/* Nothing post-dominates a CFG leaf */
+DoesNotPostDominate(?postDomCandidate, ?leafBB) :-
+    BBHeadInMethod(?x, ?method),
+    LinkBBToNew(?x, ?postDomCandidate),
+    CFGLeaf(?leafBB, ?method),
+    ?postDomCandidate != ?leafBB.
+
+
+DoesNotPostDominate(?postDomCandidate, ?BB1) :-
+    DoesNotPostDominate(?postDomCandidate, ?y),
+    MayPredecessorBBModuloThrow(?x, ?y),
+    LinkBBToNew(?x, ?BB1),
+    ?BB1 != ?postDomCandidate.
+
+
+/* If we can't prove A does not post-dominate B with the other rules, then A post-dominates B.
+ * The definition is such that we always get reflexivity: PostDominates(x,x).
+ */
+PostDominates(?domBB, ?getPDBB) :-
+    SameMethodBBHeads(?dominator, ?insn),
+    !DoesNotPostDominate(?dominator, ?insn),
+    LinkBBToNew(?dominator, ?domBB),
+    LinkBBToNew(?insn, ?getPDBB),
+    ?domBB != ?getPDBB.
+
+
+StrictPostDom(?domBB, ?getDomBB):-
+    PostDominates(?domBB, ?getDomBB),
+    !NonStrictPostDom(?domBB, ?getDomBB).
+
+
+NonStrictPostDom(?domBB1, ?getDomBB):-
+    PostDominates(?domBB1, ?getDomBB),
+    PostDominates(?domBB2, ?getDomBB),
+    ?domBB2 != ?domBB1,
+    PostDominates(?domBB1, ?domBB2).
+
+
+AllBB(?BB1):-
+    BasicBlockHead( _,?BB3),
+    LinkBBToNew(?BB3, ?BB1).
+
+LinkBBToNew(?BB1, ?BB1):-
+    BasicBlockHead(_,?BB1),
+    !PhiNodeHead(?BB1, _).
+    //contains("Example", ?BB1).
+
+SuccessorBB(?BB1, ?BB2):- 
+    MayPredecessorBBModuloThrow(?BB3, ?BB4),
+    LinkBBToNew(?BB4, ?BB2),
+    LinkBBToNew(?BB3, ?BB1),
+    ?BB1 != ?BB2.
+
+NrOfSuccBB(?BB1, ?c) :-
+    AllBB(?BB1),
+    ?c = count : {SuccessorBB(?BB1, _)}.
+
+LinkBBToNew(?BB2, ?BB1):-
+    (MayPredecessorBBModuloThrow(?BB1, _);
+    MayPredecessorBBModuloThrow(_, ?BB1)),
+    PhiNodeHead(?BB2, ?BB1).
+    //contains("Example", ?BB1).
+
+ControlDepBB(?method, ?BB1, ?BB2) :-
+    SuccessorBB(?BB1, ?BB2),
+    !StrictPostDom(?BB2, ?BB1),
+    BBHeadInMethod(?BB1, ?method).
+
+ControlDepBB(?method, ?BB1, ?BB3):-
+    ControlDepBB(?method, ?BB1, ?BB2),
+    PostDominates(?BB3, ?BB2),
+    !StrictPostDom(?BB3, ?BB1),
+    ?BB3 != ?BB1,
+    ?BB3 != ?BB2.
+
+// the last Statement of upper BB is the one, that splits control flow
+// so it's the only statement which CŔEATES control dependencies
+// in the receiving BB, all Statements are dependent
+ControlDep(?method, ?ins1, ?ins2):-
+    ControlDepBB(?method, ?BB1,?BB2),
+    LinkBBToNew(?BB, ?BB1),
+    BasicBlockTail(?BB,?ins1),
+    (BasicBlockHead(?ins2, ?BB2);
+    LinkBBToNew(?ins2, ?BB2)).
+
+ControlDep(?method, ?ins1, ?ins3):-
+    ControlDepBB(?method, ?BB1,?BB2),
+    LinkBBToNew(?BB, ?BB1),
+    BasicBlockTail(?BB,?ins1),
+    LinkBBToNew(?ins2, ?BB2),
+    BasicBlockHead(?ins3, ?ins2).
+
+// if function uses parameter ?ins1 can be first statement
+// then it does NOT appear in BasicBlockHead, but only in MethodFirstInstruction.csv
+// thus find method name via ?ins
+DataDep(?method, ?ins1, ?ins2Head):-
+    Def(?ins1, ?var),
+    Use(?ins2, ?var),
+    //contains("Example", ?ins1),
+    (BasicBlockHead(?ins1, ?head),
+    BBHeadInMethod(?head, ?method);
+    Method_FirstInstruction(?method, ?ins1)),
+    PhiNodeHead(?ins2, ?ins2Head),
+    (PhiNodeHead(?ins1, ?ins1);
+    !PhiNodeHead(?ins1, _)).
+
+DataDep(?method, ?ins1, ?ins2):-
+    Def(?ins1, ?var),
+    Use(?ins2, ?var),
+    //contains("Example", ?ins1),
+    (BasicBlockHead(?ins1, ?head),
+    BBHeadInMethod(?head, ?method);
+    Method_FirstInstruction(?method, ?ins1)),
+    !PhiNodeHead(?ins2,_),
+    (PhiNodeHead(?ins1, ?ins1);
+    !PhiNodeHead(?ins1, _)).
+
+
+PDGNodes(?method, ?ins, ?ln):-
+    (DataDep(?method, ?ins,_);
+    DataDep(_, _, ?ins);
+    ControlDep(?method, ?ins,_);
+    ControlDep(_, _,?ins)),
+    OptInstructionFromMethodIndex(?method, ?ln, ?ins).
+
+NodeStats(?m, ?ins, ?in_dd,?out_dd, ?in_cd, ?out_cd):-
+    PDGNodes(?m, ?ins, _),
+    ?in_dd = count : {DataDep(?m, _,?ins)},
+    ?out_dd = count : {DataDep(?m, ?ins, _)},
+    ?in_cd = count : {ControlDep(?m, _, ?ins)},
+    ?out_cd = count : {ControlDep(?m, ?ins, _)}.
+
+FunctionSignature(?method, ?nr_nodes, ?in_dd,?out_dd, ?in_cd, ?out_cd, ?ins):-
+    Method_FirstInstruction(?method,?ins),
+    ?nr_nodes = count : {NodeStats(?method,_, _, _ ,_,_)},
+    ?in_dd = sum ?in_dd : {NodeStats(?method, _, ?in_dd,_,_, _ )},
+    ?out_dd = sum ?out_dd : {NodeStats(?method, _, _,?out_dd , _, _ )},
+    ?in_cd = sum ?in_cd : {NodeStats(?method, _, _,_, ?in_cd,_)},
+    ?out_cd = sum ?out_cd : {NodeStats(?method, _, _, _,_, ?out_cd)}.
