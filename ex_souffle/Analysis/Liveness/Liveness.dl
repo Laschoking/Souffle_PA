@@ -132,7 +132,7 @@
 
 
 .decl InterproceduralDefUse(from_ass:Assignment, ?from_var:Var, ?to_ass:Assignment, ?to_var:Var)
-.output InterproceduralDefUse(rfc4180=true,delimiter="\t")
+//.output InterproceduralDefUse(rfc4180=true,delimiter="\t")
 
 .decl Use(a:Assignment, ?var:Var)
 
@@ -259,8 +259,8 @@ InterproceduralDefUse([?from_meth,"Return" , ?from_ins],  ?from_var, [?to_meth, 
     StaticMethodInvocation(?to_ins, _, ?from_meth, ?to_meth).
 
 
-AddToDefUse(?to_ass, ?to_var, ?from_var):-
-    InterproceduralDefUse(_,?from_var, ?to_ass, ?to_var).
+//AddToDefUse(?to_ass, ?to_var, ?from_var):-
+//    InterproceduralDefUse(_,?from_var, ?to_ass, ?to_var).
 
 // if the parameters are used, the value is copied to the actual variable
 // i.e. foo(integer a) -> defines a

@@ -2,7 +2,9 @@
 doop=/home/kotname/Documents/Diplom/Code/doop/master
 
 echo $doop
-: '
+
+mkdir prof25_26
+
 rm ../../out/Liveness/25/*.csv
 rm ../../out/Liveness/26/*.csv
 
@@ -27,29 +29,14 @@ cd ../../Analysis/Liveness
 
 souffle CompareLiveness.dl -F ../../out/Liveness/vgl25_26 -D ../../out/Liveness/vgl25_26 -j4 -pCompLiveness25_26
 
-'
-rm ../../out/Liveness/7/*.csv
-rm ../../out/Liveness/8/*.csv
+mv Liveness25 prof25_26/
+mv Liveness26 prof25_26/
+mv CompLiveness25_26 prof25_26/
+cd prof25_26/
+souffleprof -j Liveness25 
+souffleprof -j Liveness26
+souffleprof -j CompLiveness25_26 
 
-souffle Liveness.dl -F $doop/out/7PDG_Example_reordered/database -D ../../out/Liveness/7
-
-souffle Liveness.dl -F $doop/out/8PDG_Example_re_addSm/database -D ../../out/Liveness/8
-
-
-cd ../../out/Liveness
-
-rm vgl7_8/*
-
-cp 7/Def.csv vgl7_8/Def1.csv
-cp 7/Use.csv vgl7_8/Use1.csv
-cp 7/InterproceduralDefUse.csv vgl7_8/InterproceduralDefUse1.csv
-
-cp 8/Def.csv vgl7_8/Def2.csv
-cp 8/Use.csv vgl7_8/Use2.csv
-cp 8/InterproceduralDefUse.csv vgl7_8/InterproceduralDefUse2.csv
-
-
-cd ../../Analysis/Liveness
-
-souffle CompareLiveness.dl -F ../../out/Liveness/vgl7_8 -D ../../out/Liveness/vgl7_8
-
+mv 1.html Liveness25.html
+mv 2.html Liveness26.html
+mv 3.html CompLiveness25_26.html

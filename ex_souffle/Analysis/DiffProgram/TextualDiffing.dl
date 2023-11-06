@@ -1,0 +1,58 @@
+.type Var <: symbol
+.type Method <: symbol
+.decl Var_SimpleName1(?var:Var, ?m:Method)
+.input Var_SimpleName1(IO="file", filename="Var-SimpleName.facts")
+
+.decl Var_SimpleName2(?var:Var, ?m:Method)
+.input Var_SimpleName2(IO="file", filename="Var-SimpleName2.facts")
+
+
+.decl Var_DeclaringMethod1(?var:Var, ?m:Method)
+.input Var_DeclaringMethod1(IO="file", filename="Var-DeclaringMethod.facts")
+
+.decl Var_DeclaringMethod2(?var:Var, ?m:Method)
+.input Var_DeclaringMethod2(IO="file", filename="Var-DeclaringMethod2.facts")
+
+
+.decl VarShortening(?var:Var,?slice:Var, ?lineNr:number)
+.output VarShortening
+.decl NodeRename(?var:Var, ?slice:Var)
+.output NodeRename
+//die meisten Variablen haben eine Zahl am Ende Ausnahme ggf. Variablen die definiert, aber nicht deklariert sind
+// andere Typen: var#_0, $stack5
+// funktor schreiben für das diffing
+// vmtl existiert keine andere Möglichkeit, die Zeilennummer zu bstimmen als zu slicen
+// bei Instruktionen existiert allerdings eine Zeilennummer
+
+.functor VarSimilarity(s:symbol, g:symbol):number
+
+
+NodeRename(?var, ?slice):-
+    Var_DeclaringMethod1(?var, _),
+    Var_SimpleName1(?var, ?simpleVar1),
+    match(".*\\d", ?simpleVar1),
+    ?len = strlen(?simpleVar1),
+    ?len > 1,
+    ?slice = substr(?simpleVar1, 0, ?len -1).
+
+NodeRename(?var, ?moreSlice):-
+    NodeRename(?var, ?slice),
+    match(".*\\d", ?slice),
+    ?len = strlen(?slice),
+    ?len > 1,
+    ?moreSlice = substr(?slice, 0, ?len -1).
+
+VarShortening(?var, ?slice, ?lineNr):-
+    NodeRename(?var, ?slice),
+    !match(".*\\d", ?slice),
+    ?lenSlice = strlen(?slice),
+    Var_SimpleName1(?var, ?simpleVar1),
+    ?lenVar = strlen(?simpleVar1),
+    ?lineNr = to_number(substr(?simpleVar1, ?lenSlice, ?lenVar - ?lenSlice)).
+
+.decl VarScore(v:symbol, h:symbol, s:number, g:number)
+.output VarScore
+VarScore(?var, "hello", ?sim, ?lineDiff):-
+    VarShortening(?var, ?slice, ?lineNr),
+    ?sim = @VarSimilarity(?slice, "hello"),
+    ?lineDiff = ?lineNr - 20.
