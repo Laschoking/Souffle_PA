@@ -1,0 +1,158 @@
+.type Var <: symbol
+.type Method <: symbol
+.type Operator <: symbol
+.type Instruction <: InsType
+.type MethodInv <: symbol
+.type InsType <: symbol
+
+.decl PDGNodes1(?m:Method, ?ins:Instruction, ?ln:number)
+.input PDGNodes1(IO="file", filename="PDGNodes1.csv")
+
+
+.decl PDGNodes2(?m:Method, ?ins:Instruction, ?ln:number)
+.input PDGNodes2(IO="file", filename="PDGNodes2.csv")
+
+
+.decl DataDep1(?m:Method, ?i1:Instruction, ?ins:Instruction)
+.input DataDep1(IO="file", filename="DataDep1.csv")
+
+.decl DataDep2(?m:Method,?i1:Instruction, ?ins:Instruction)
+.input DataDep2(IO="file", filename="DataDep2.csv")
+
+.decl ControlDep1(?m:Method,?i1:Instruction, ?ins:Instruction)
+.input ControlDep1(IO="file", filename="ControlDep1.csv")
+
+.decl ControlDep2(?m:Method,?i1:Instruction, ?ins:Instruction)
+.input ControlDep2(IO="file", filename="ControlDep2.csv")
+
+.decl AllPDGNodes(?ins:Instruction)
+
+.decl NodeStats1(?m:Method, ?node:Instruction, ?in_dd:number,?out_dd:number,?in_cd:number,?out_cd:number)
+.input NodeStats1(IO="file", filename="NodeStats1.csv")
+
+.decl NodeStats2(?m:Method, ?node:Instruction, ?in_dd:number,?out_dd:number,?in_cd:number,?out_cd:number)
+.input NodeStats2(IO="file", filename="NodeStats2.csv")
+
+.decl FunctionSignature1(f:Method, ?n:number, ?in_dd:number,?out_dd:number,?in_cd:number,?out_cd:number,?s:Instruction)
+.input FunctionSignature1(IO="file", filename="FunctionSignature1.csv")
+
+
+.decl FunctionSignature2(f:Method, ?n:number, ?in_dd:number,?out_dd:number,?in_cd:number,?out_cd:number,?s:Instruction)
+.input FunctionSignature2(IO="file", filename="FunctionSignature2.csv")
+
+
+.decl NodeRename(ins:Instruction, i:Instruction)
+.output NodeRename
+
+.decl InstructionType(ins:Instruction, slice:InsType)
+.output InstructionType
+
+.decl SimilarFunctions(?m:Method, ?ins1:Instruction, ?ins2: Instruction)
+.output SimilarFunctions
+
+.decl SimilarStatements(?m:Method, ?ins11:Instruction, ?ins22:Instruction)
+.output SimilarStatements
+
+.decl VerySimilarFunctions(m:Method, n:number)
+.output VerySimilarFunctions
+
+
+.decl eq(m:Method, ins1:Instruction, ins2:Instruction)
+.output eq
+AllPDGNodes(?ins):-
+    PDGNodes1(_, ?ins,_).
+
+AllPDGNodes(?ins):-
+    PDGNodes2(_, ?ins,_).
+
+// here happens a memory vs cpu tradeoff
+// in the current implementation we will slice more often than necessary
+// i.e. for x/123 will create slices (x/123 x/12), (x/123 x/1), (x/123 x/)
+// while an entry for (x/12 x/1) could exist already
+NodeRename(?ins, ?slice):-
+    AllPDGNodes(?ins),
+    match(".*\\d", ?ins),
+    ?len = strlen(?ins),
+    ?len > 1,
+    ?slice = substr(?ins, 0, ?len -1).
+
+NodeRename(?ins, ?moreSlice):-
+    NodeRename(?ins, ?slice),
+    match(".*\\d", ?slice),
+    ?len = strlen(?slice),
+    ?len > 1,
+    ?moreSlice = substr(?slice, 0, ?len -1).
+
+InstructionType(?ins, ?slice):-
+    NodeRename(?ins, ?slice),
+    !match(".*\\d", ?slice).
+
+eq(?m, ?ins1, ?ins2):-
+    NodeStats1(?m, ?ins1, ?in_dd, ?out_dd, ?in_cd, ?out_cd),
+    NodeStats2(?m, ?ins2, ?in_dd, ?out_dd, ?in_cd, ?out_cd),
+    InstructionType(?ins1, ?type),
+    InstructionType(?ins2, ?type).
+
+
+SimilarFunctions(?m, ?start_ins1, ?start_ins2):-
+    FunctionSignature1(?m, _,_,_,_,_, ?start_ins1),
+    FunctionSignature2(?m, _,_,_, _,_,?start_ins2).
+
+
+SimilarStatements(?m, ?ins1, ?ins2):-
+    SimilarFunctions(?m, _,_ ),
+    ?l1 = min ?ln1:  {PDGNodes1(?m, _, ?ln1)},
+    PDGNodes1(?m, ?ins1, ?l1),
+    ?l2 = min ?ln2:  {PDGNodes2(?m, _, ?ln2)},
+    PDGNodes2(?m, ?ins2, ?l2),
+    eq(?m, ?ins1, ?ins2).
+
+.decl test(?m:Method, ?ins11:Instruction, ?ins22:Instruction)
+.output test
+test(?m, ?ins1, ?ins2):-
+    SimilarFunctions(?m, _,_ ),
+    ?l1 = min ?ln1:  {PDGNodes1(?m, _, ?ln1)},
+    PDGNodes1(?m, ?ins1, ?l1),
+    ?l2 = min ?ln2:  {PDGNodes2(?m, _, ?ln2)},
+    PDGNodes2(?m, ?ins2, ?l2).
+
+
+SimilarStatements(?m, ?ins1, ?ins2):-
+    eq(?m, ?ins1, ?ins2),
+    ?out_cd = max ?out_cd : {NodeStats1(?m, ?ins1, _,_,_,?out_cd)},
+    NodeStats1(?m, ?ins1, _, _, _, ?out_cd).
+    
+
+SimilarStatements(?m, ?ins11, ?ins22):-
+    SimilarStatements(?m, ?ins1, ?ins2),
+    ((ControlDep1(?m, ?ins1, ?ins11),
+    ControlDep2(?m, ?ins2, ?ins22));
+    (DataDep1(?m, ?ins1, ?ins11),
+    DataDep2(?m, ?ins2, ?ins22));
+    (ControlDep1(?m, ?ins11, ?ins11),
+    ControlDep2(?m, ?ins22, ?ins2));
+    (DataDep1(?m, ?ins11, ?ins1),
+    DataDep2(?m, ?ins22, ?ins2))),
+    eq(?m, ?ins11, ?ins22).
+
+
+SimilarStatements(?m, ?ins11, ?ins22):-
+    SimilarStatements(?m, ?ins1, ?ins2),
+    DataDep1(?m, ?ins1, ?ins11),
+    DataDep2(?m, ?ins2, ?ins22),
+    eq(?m, ?ins11, ?ins22).
+
+.decl FoundStatement(m:Method, i:Instruction)
+.output FoundStatement
+FoundStatement(?m, ?ins):-
+    SimilarStatements(?m, ?ins,_).
+
+VerySimilarFunctions(?m,?nodes):-
+    FunctionSignature1(?m, ?nodes, _,  _, _,_,_),
+    FunctionSignature2(?m, ?nodes, _,  _, _,_,_),
+    ?nodes = count : FoundStatement(?m,_).
+    
+
+
+
+

@@ -1,0 +1,171 @@
+.type Var <: symbol
+.type Method <: symbol
+.type Operator <: symbol
+.type Instruction <: InsType
+.type MethodInv <: symbol
+.type InsType <: symbol
+.type Assignment = [m:Method, t:InsType, i:Instruction]
+
+// ev. entfernen der Instructions-IDs
+// anornung der spalten ändern? z.b. Method hinten, variablen vor ?
+
+.decl Use1(a:Assignment, ?var:Var)
+.input Use1(IO="file", filename="Use1.csv", delimiter="\t",rfc4180=true)
+
+.decl Def1(a:Assignment, ?var:Var)
+.input Def1(IO="file", filename="Def1.csv", delimiter="\t",rfc4180=true)
+
+//type can  be either AssignMethodParameter or AssignReturnValue
+//.decl InterproceduralDefUse1(a1:Assignment, ?from_var:Var, ?a2:Assignment, ?to_var:Var)
+//.input InterproceduralDefUse1(IO="file", filename="InterproceduralDefUse1.csv",delimiter="\t",rfc4180=true)
+
+.decl Use2(a:Assignment, ?var:Var)
+.input Use2(IO="file", filename="Use2.csv", delimiter="\t",rfc4180=true)
+
+.decl Def2(a:Assignment, ?var:Var)
+.input Def2(IO="file", filename="Def2.csv", delimiter="\t",rfc4180=true)
+
+//.decl InterproceduralDefUse2(a1:Assignment, ?from_var:Var, a2:Assignment, ?to_var:Var)
+//.input InterproceduralDefUse2(IO="file", filename="InterproceduralDefUse2.csv",delimiter="\t",rfc4180=true)
+
+.decl DataDep1(?meth:Method, ?t1:InsType,?v1:Var,?t2:InsType, ?v2:Var)
+.output DataDep1 
+
+.decl RootNodes1(?meth:Method, ?t:InsType,?v:Var)
+.output RootNodes1
+
+.decl VarMeth1(var:Var, meth:Method)
+//.output VarMeth1
+
+.decl VarDep1(?from_var:Var, ?to_var:Var)
+.output VarDep1
+
+.decl DataDep2(?meth:Method, ?t1:InsType,?v1:Var,?t2:InsType, ?v2:Var)
+.output DataDep2 
+
+.decl RootNodes2(?meth:Method, ?t:InsType,?v:Var)
+.output RootNodes2
+
+.decl VarMeth2(var:Var, meth:Method)
+//.output VarMeth2
+
+.decl VarDep2(?from_var:Var, ?to_var:Var)
+.output VarDep2
+
+.decl TwoDDPred1(?var:Var)
+.decl TwoDDPred2(?var:Var)
+.output TwoDDPred1
+.output TwoDDPred2
+
+//TwoDDPred1(?to_var,?c):-
+ //   DataDep1(_,_,_,_,?to_var),
+  //  ?c = count : {DataDep1(_,_,_,_,?to_var)}.
+
+TwoDDPred1(?to_var):-
+    DataDep1(_,_,?from_var1,_,?to_var),
+    DataDep1(_,_,?from_var2,_,?to_var),
+    ?from_var1 != ?from_var2.
+    
+
+// Annahme, dass nur max. 2 Predecessor existieren, da IR max. 2 Opperanden zulässt
+// However, ev. sind mehrere Parameter ein Problem
+TwoDDPred2(?to_var):-
+    DataDep2(_,_,?from_var1,_,?to_var),
+    DataDep2(_,_,?from_var2,_,?to_var),
+    ?from_var1 != ?from_var2.
+
+
+VarMeth1(?var,?meth):-
+    Def1([?meth,_,_],?var).
+
+RootNodes1(?meth, ?from_type, ?from_var):-
+    DataDep1(?meth, ?from_type,?from_var, _, _),
+    !DataDep1(_ , _, _,_,?from_var).
+
+DataDep1(?meth,?from_type,?from_var, ?to_type, ?to_var):-
+    Def1(?def_ass , ?from_var),
+    Use1([?meth,?to_type, ?ins], ?from_var),
+    Def1([?meth,?to_type, ?ins] , ?to_var),
+    ?def_ass = [?meth ,?from_type, _].
+
+//DataDep1("Interprocedural", ?from_type, ?from_var, ?to_type, ?to_var):-
+ //   InterproceduralDefUse1([_,?from_type, _], ?from_var, ?to_ass, ?to_var),
+  //  Use1(?to_ass, ?from_var),
+   // Def1(?to_ass, ?to_var),
+    //?to_ass = [_, ?to_type, _].
+
+VarDep1(?from_var, ?to_var):-
+    DataDep1(_,_,?from_var,_,?to_var).
+
+
+VarMeth2(?var,?meth):-
+    Def2([?meth,_,_],?var).
+
+RootNodes2(?meth, ?from_type, ?from_var):-
+    DataDep2(?meth, ?from_type,?from_var, _, _),
+    !DataDep2(_ , _, _,_,?from_var).
+
+DataDep2(?meth,?from_type,?from_var, ?to_type, ?to_var):-
+    Def2(?def_ass , ?from_var),
+    Use2([?meth,?to_type, ?ins], ?from_var),
+    Def2([?meth,?to_type, ?ins], ?to_var),
+    ?def_ass = [?meth ,?from_type, _].
+// relation InterproceduralDefUse holds the direct connections between 2 vars already
+// it handles the mapping of multiple input parameters to a function
+//DataDep2("Interprocedural", ?from_type, ?from_var, ?to_type, ?to_var):-
+ //   InterproceduralDefUse2([_,?from_type, _], ?from_var, ?to_ass, ?to_var),
+  //  Use2(?to_ass, ?from_var),
+   // Def2(?to_ass, ?to_var),
+   // ?to_ass = [_, ?to_type, _].
+
+VarDep2(?from_var, ?to_var):-
+    DataDep2(_,_,?from_var,_,?to_var).
+
+
+// the assignment of function parameters does not have an own instruction
+// they are just here 
+// so we say that they are created in the calling function
+
+
+
+// Bei DEF wird immer eine Variable definiert, aber ggf. keine Verwendet
+// Bei USE wird immer eine Variable verwendet, aber ggf. keine neue erzeugt
+
+
+// falls Instructionen vertauscht werden, ändert sich Variablenname & Ins
+// start bei einem Punkt & verfolgen der kette?
+
+// call mit parametern / ohne ist immer staticInvoke
+// obj.foo wäre virtualInvoke 
+// obj.init specialInvoke
+// ob  Rückgabewert existiert hängt von Formal / Actual parameter ab
+
+// we know that only max. 2 variables can influence one variable 
+.decl CommonNodes(meth:Method, ?t:InsType, ?v1:Var, ?v2:Var)
+.output CommonNodes
+CommonNodes(?meth, ?type, ?from_var, ?to_var):-
+    RootNodes1(?meth, ?type, ?from_var),
+    RootNodes2(?meth, ?type, ?to_var).
+
+CommonNodes(?meth,?to_type, ?to_var1, ?to_var2):-
+    CommonNodes(?meth, ?from_type, ?from_var1, ?from_var2),
+    DataDep1(?meth,?from_type, ?from_var1, ?to_type, ?to_var1),
+    DataDep2(?meth,?from_type, ?from_var2, ?to_type, ?to_var2),
+    !TwoDDPred1(?to_var1),
+    !TwoDDPred2(?to_var2).
+
+CommonNodes(?meth,?to_type, ?to_var1, ?to_var2):-
+    CommonNodes(?meth, ?from_type1, ?from_var11, ?from_var21),
+    CommonNodes(?meth, ?from_type2, ?from_var12, ?from_var22),
+    DataDep1(?meth,?from_type1, ?from_var11, ?to_type, ?to_var1),
+    DataDep1(?meth,?from_type2, ?from_var12, ?to_type, ?to_var1),
+    TwoDDPred1(?to_var1),
+    TwoDDPred2(?to_var2),
+    DataDep2(?meth,?from_type1, ?from_var21, ?to_type, ?to_var2),
+    DataDep2(?meth,?from_type2, ?from_var22, ?to_type, ?to_var2).
+
+
+.decl TypeInstr(t:InsType)
+//.output TypeInstr
+TypeInstr(?t):-
+    Def2([_,?t,_], _).

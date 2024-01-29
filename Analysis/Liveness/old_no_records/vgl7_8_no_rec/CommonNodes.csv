@@ -1,0 +1,25 @@
+Interprocedural	AssignMethodParameter	<Example: void main(java.lang.String[])>/$stack4	<Example: void main(java.lang.String[])>/$stack5	0
+Interprocedural	AssignMethodParameter	<Example: int add(int,int)>/@parameter1	<Example: int add(int,int)>/@parameter1	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/sum_$$A_1_$$A_1#_10	<Example: void main(java.lang.String[])>/sum_$$A_1_$$A_1#_10	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/sum_$$A_1_$$A_1#_10	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_1#_10	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_1#_10	<Example: void main(java.lang.String[])>/sum_$$A_1_$$A_1#_10	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_1#_10	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_1#_10	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_2#_9	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_2#_9	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_2#_9	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_3#_18	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_2#_9	<Example: void main(java.lang.String[])>/$stack8	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/$stack7	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_2#_9	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/$stack7	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_3#_18	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/$stack7	<Example: void main(java.lang.String[])>/$stack8	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/$stack6	<Example: void main(java.lang.String[])>/$stack7	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_3#_18	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_2#_9	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_3#_18	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_3#_18	0
+<Example: void main(java.lang.String[])>	AssignLocal	<Example: void main(java.lang.String[])>/i_$$A_1_$$A_3#_18	<Example: void main(java.lang.String[])>/$stack8	0
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/i_$$A_1#_9	<Example: void main(java.lang.String[])>/i_$$A_1#_9	0
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/i_$$A_1#_9	<Example: void main(java.lang.String[])>/sum_$$A_1#_8	0
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/i_$$A_1#_9	<Example: void main(java.lang.String[])>/c#_7	0
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/sum_$$A_1#_8	<Example: void main(java.lang.String[])>/i_$$A_1#_9	0
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/sum_$$A_1#_8	<Example: void main(java.lang.String[])>/sum_$$A_1#_8	0
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/sum_$$A_1#_8	<Example: void main(java.lang.String[])>/c#_7	0
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/c#_7	<Example: void main(java.lang.String[])>/i_$$A_1#_9	0
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/c#_7	<Example: void main(java.lang.String[])>/sum_$$A_1#_8	0
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/c#_7	<Example: void main(java.lang.String[])>/c#_7	0

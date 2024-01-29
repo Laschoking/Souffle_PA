@@ -1,0 +1,4 @@
+Interprocedural	AssignMethodParameter	<Example: void main(java.lang.String[])>/$stack5
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/i_$$A_1#_9
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/sum_$$A_1#_8
+<Example: void main(java.lang.String[])>	AssignNumConstant	<Example: void main(java.lang.String[])>/c#_7

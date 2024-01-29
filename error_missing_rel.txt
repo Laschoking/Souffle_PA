@@ -1,0 +1,124 @@
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 140
+   Instruction_Method(?insn, ?method),
+---^-----------------------------------
+Error: Undefined relation Throw in file cfg-self-contained.dl at line 143
+   !Throw(?insn, _, _, ?method).
+----^----------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 146
+   Instruction_Method(?insn, ?method),
+---^-----------------------------------
+Error: Undefined relation Instruction_Index in file cfg-self-contained.dl at line 147
+   Instruction_Index(?insn, ?index).
+---^---------------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 150
+   Instruction_Method(?insn, ?inMethod),
+---^-------------------------------------
+Error: Undefined relation Instruction_Index in file cfg-self-contained.dl at line 151
+   Instruction_Index(?insn, ?i),
+---^-----------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 155
+   Instruction_Method(?insn, ?inMethod),
+---^-------------------------------------
+Error: Undefined relation Instruction_Index in file cfg-self-contained.dl at line 156
+   Instruction_Index(?insn, ?i),
+---^-----------------------------
+Error: Undefined relation Goto_Target in file cfg-self-contained.dl at line 160
+   Goto_Target(?goto, ?targetIndex),
+---^---------------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 161
+   Instruction_Method(?goto, ?gotoMethod),
+---^---------------------------------------
+Error: Undefined relation If_Target in file cfg-self-contained.dl at line 164
+   If_Target(?if, ?targetIndex),
+---^-----------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 165
+   Instruction_Method(?if, ?method),
+---^---------------------------------
+Error: Undefined relation Switch_Target in file cfg-self-contained.dl at line 168
+   (Switch_Target(?sw, _, ?targetIndex) ; Switch_DefaultTarget(?sw, ?targetIndex)),
+----^-------------------------------------------------------------------------------
+Error: Undefined relation Switch_DefaultTarget in file cfg-self-contained.dl at line 168
+   (Switch_Target(?sw, _, ?targetIndex) ; Switch_DefaultTarget(?sw, ?targetIndex)),
+------------------------------------------^-----------------------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 169
+   Instruction_Method(?sw, ?method),
+---^---------------------------------
+Error: Undefined relation ExceptionHandler_Index in file cfg-self-contained.dl at line 176
+   ExceptionHandler_Index(?handler, ?index),
+---^-----------------------------------------
+Error: Undefined relation ExceptionHandler_Method in file cfg-self-contained.dl at line 177
+   ExceptionHandler_Method(?handler, ?method),
+---^-------------------------------------------
+Error: Undefined relation isIf_Insn in file cfg-self-contained.dl at line 181
+   isIf_Insn(?if),
+---^---------------
+Error: Undefined relation isReturnInstruction in file cfg-self-contained.dl at line 189
+   isReturnInstruction(?ret),
+---^--------------------------
+Error: Undefined relation isThrow_Insn in file cfg-self-contained.dl at line 192
+   isThrow_Insn(?throw),
+---^---------------------
+Error: Undefined relation isGoto_Insn in file cfg-self-contained.dl at line 228
+   isGoto_Insn(?insn) ;
+---^--------------------
+Error: Undefined relation isSwitch_Insn in file cfg-self-contained.dl at line 229
+   isSwitch_Insn(?insn) ;
+---^----------------------
+Error: Undefined relation isReturnInstruction in file cfg-self-contained.dl at line 230
+   isReturnInstruction(?insn) ;
+---^----------------------------
+Error: Undefined relation isThrow_Insn in file cfg-self-contained.dl at line 231
+   isThrow_Insn(?insn).
+---^--------------------
+Error: Undefined relation isAssignLocal_Insn in file cfg-self-contained.dl at line 308
+   isAssignLocal_Insn(?insn),
+---^--------------------------
+Error: Undefined relation AssignInstruction_To in file cfg-self-contained.dl at line 309
+   AssignInstruction_To(?insn, ?var),
+---^----------------------------------
+Error: Undefined relation isAssignLocal_Insn in file cfg-self-contained.dl at line 311
+   isAssignLocal_Insn(?nextInsn),
+---^------------------------------
+Error: Undefined relation AssignInstruction_To in file cfg-self-contained.dl at line 312
+   AssignInstruction_To(?nextInsn, ?var).
+---^--------------------------------------
+Error: Undefined relation isReturnInstruction in file cfg-self-contained.dl at line 337
+   isReturnInstruction(?insn),
+---^---------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 338
+   Instruction_Method(?insn, ?method).
+---^-----------------------------------
+Error: Undefined relation Instruction_Index in file cfg-self-contained.dl at line 344
+   Instruction_Index(?insnHigher, ?indexHigher),
+---^---------------------------------------------
+Error: Undefined relation Instruction_Index in file cfg-self-contained.dl at line 345
+   Instruction_Index(?insn, ?index),
+---^---------------------------------
+Error: Undefined relation isInstruction in file cfg-self-contained.dl at line 350
+   isInstruction(?returnInsn), 
+---^----------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 355
+   Instruction_Method(?returnInsn, ?meth),
+---^---------------------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 365
+   Instruction_Method(?insn, ?method).
+---^-----------------------------------
+Error: Undefined relation Instruction_Index in file cfg-self-contained.dl at line 385
+   Instruction_Index(?prevLarge, ?indexLarge),
+---^-------------------------------------------
+Error: Undefined relation Instruction_Index in file cfg-self-contained.dl at line 386
+   Instruction_Index(?prevSmall, ?indexSmall),
+---^-------------------------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 398
+   Instruction_Method(?insn, ?method),
+---^-----------------------------------
+Error: Undefined relation Instruction_Index in file cfg-self-contained.dl at line 425
+   Instruction_Index(?prevLarge, ?indexLarge),
+---^-------------------------------------------
+Error: Undefined relation Instruction_Index in file cfg-self-contained.dl at line 426
+   Instruction_Index(?prevSmall, ?indexSmall),
+---^-------------------------------------------
+Error: Undefined relation Instruction_Method in file cfg-self-contained.dl at line 438
+   Instruction_Method(?insn, ?method),
+---^-----------------------------------
+41 errors generated, evaluation aborted
