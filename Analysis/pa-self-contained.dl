@@ -1,4 +1,6 @@
-// Attention: this analysis is copied from doop/master/souffle-logic/If MainClass holds the path to the Class i.e. docs/doop.../Example the analysis does not have an entry point
+// Attention: this analysis is copied from doop/master/souffle-logic/analyses/micro/self-contained.dl
+// a minor change has been made: in the original version MainClass holds the path to the class name 
+// i.e. "/path-to/Example"  and not the class name "Example". this has been modified to run the analysis successfully
 
 
 // Main schema
@@ -331,16 +333,16 @@ VirtualMethodInvocation_Descriptor(?invocation, ?descriptor) :-
 .decl SupertypeOf(?supertype:Type, ?type:Type)
 .decl SubtypeOfDifferent(?subtype:Type, ?type:Type)
 .decl MainMethodDeclaration(?method:Method)
-.output MethodLookup
-.output MethodImplemented
-.output DirectSubclass
-.output Subclass
-.output Superclass
-.output Superinterface
-.output SubtypeOf
-.output SupertypeOf
-.output SubtypeOfDifferent
-.output MainMethodDeclaration
+//.output MethodLookup
+//.output MethodImplemented
+//.output DirectSubclass
+//.output Subclass
+//.output Superclass
+//.output Superinterface
+//.output SubtypeOf
+//.output SupertypeOf
+//.output SubtypeOfDifferent
+//.output MainMethodDeclaration
 
 
 MethodLookup(?simplename, ?descriptor, ?type, ?method) :-
@@ -479,19 +481,12 @@ Reachable(?clinit) :-
 
 // Main (value-based) analysis
 .decl Assign(?to:Var, ?from:Var)
-.output Assign
 .decl VarPointsTo(?heap:HeapAllocation, ?var:Var)
-.output VarPointsTo
 .decl InstanceFieldPointsTo(?heap:HeapAllocation , ?fld:Field, ?baseheap:HeapAllocation)
-.output InstanceFieldPointsTo
 .decl StaticFieldPointsTo(?heap:HeapAllocation, ?fld:Field)
-.output StaticFieldPointsTo
 .decl CallGraphEdge(?invocation:MethodInvocation, ?meth:Method)
-.output CallGraphEdge
 .decl ArrayIndexPointsTo(?baseheap:HeapAllocation, ?heap:HeapAllocation)
-.output ArrayIndexPointsTo
 .decl Reachable(?method:Method)
-.output Reachable
 Assign(?actual, ?formal) :-
   CallGraphEdge(?invocation, ?method),
   FormalParam(?index, ?method, ?formal),
@@ -596,92 +591,92 @@ VarPointsTo(?heap, ?this) :-
 Reachable(?method) :-
   basic.MainMethodDeclaration(?method).
 
-.output MainClass
-.output Method_Descriptor
-
-.output isType
-.output isReferenceType
-.output isArrayType
-.output isClassType
-.output isInterfaceType
-.output DirectSuperclass
-.output DirectSuperinterface
-.output ApplicationClass
-.output Field_DeclaringType
-.output Method_DeclaringType
-.output Method_ReturnType
-.output Method_SimpleName
-.output Method_ParamTypes
-.output Method_Modifier
-.output FormalParam
-.output ThisVar
-.output Var_Type
-.output Var_DeclaringMethod
-.output HeapAllocation_Type
-.output MainMethodArgArrayContent
-.output Instruction_Method
-.output isVirtualMethodInvocation_Insn
-.output isStaticMethodInvocation_Insn
-.output FieldInstruction_Signature
-.output LoadInstanceField_Base
-.output LoadInstanceField_To
-.output StoreInstanceField_From
-.output StoreInstanceField_Base
-.output LoadStaticField_To
-.output StoreStaticField_From
-.output ComponentType
-.output LoadArrayIndex_Base
-.output LoadArrayIndex_To
-.output StoreArrayIndex_From
-.output StoreArrayIndex_Base
-.output AssignInstruction_To
-.output AssignCast_From
-.output AssignCast_Type
-.output AssignLocal_From
-.output AssignHeapAllocation_Heap
-.output ReturnNonvoid_Var
-.output MethodInvocation_Method
-.output AssignReturnValue
-.output ActualParam
-.output VirtualMethodInvocation_Base
-.output VirtualMethodInvocation_SimpleName
-.output VirtualMethodInvocation_Descriptor
-.output SpecialMethodInvocation_Base
-.output MethodInvocation_Base
-.output LoadInstanceField
-.output StoreInstanceField
-.output LoadStaticField
-.output StoreStaticField
-.output LoadArrayIndex
-.output StoreArrayIndex
-.output AssignCast
-.output AssignLocal
-.output AssignHeapAllocation
-.output ReturnVar
-.output StaticMethodInvocation
-.output _ClassType
-.output _ArrayType
-.output _InterfaceType
-.output _Var_DeclaringMethod
-.output _ApplicationClass
-.output _ThisVar
-.output _NormalHeap
-.output _StringConstant
-.output _AssignHeapAllocation
-.output _AssignLocal
-.output _AssignCast
-.output _Field
-.output _StaticMethodInvocation
-.output _SpecialMethodInvocation
-.output _VirtualMethodInvocation
-.output _Method
-.output _StoreInstanceField
-.output _LoadInstanceField
-.output _StoreStaticField
-.output _LoadStaticField
-.output _StoreArrayIndex
-.output _LoadArrayIndex
-.output _Return
+//.output MainClass
+//.output Method_Descriptor
+//
+//.output isType
+//.output isReferenceType
+//.output isArrayType
+//.output isClassType
+//.output isInterfaceType
+//.output DirectSuperclass
+//.output DirectSuperinterface
+//.output ApplicationClass
+//.output Field_DeclaringType
+//.output Method_DeclaringType
+//.output Method_ReturnType
+//.output Method_SimpleName
+//.output Method_ParamTypes
+//.output Method_Modifier
+//.output FormalParam
+//.output ThisVar
+//.output Var_Type
+//.output Var_DeclaringMethod
+//.output HeapAllocation_Type
+//.output MainMethodArgArrayContent
+//.output Instruction_Method
+//.output isVirtualMethodInvocation_Insn
+//.output isStaticMethodInvocation_Insn
+//.output FieldInstruction_Signature
+//.output LoadInstanceField_Base
+//.output LoadInstanceField_To
+//.output StoreInstanceField_From
+//.output StoreInstanceField_Base
+//.output LoadStaticField_To
+//.output StoreStaticField_From
+//.output ComponentType
+//.output LoadArrayIndex_Base
+//.output LoadArrayIndex_To
+//.output StoreArrayIndex_From
+//.output StoreArrayIndex_Base
+//.output AssignInstruction_To
+//.output AssignCast_From
+//.output AssignCast_Type
+//.output AssignLocal_From
+//.output AssignHeapAllocation_Heap
+//.output ReturnNonvoid_Var
+//.output MethodInvocation_Method
+//.output AssignReturnValue
+//.output ActualParam
+//.output VirtualMethodInvocation_Base
+//.output VirtualMethodInvocation_SimpleName
+//.output VirtualMethodInvocation_Descriptor
+//.output SpecialMethodInvocation_Base
+//.output MethodInvocation_Base
+//.output LoadInstanceField
+//.output StoreInstanceField
+//.output LoadStaticField
+//.output StoreStaticField
+//.output LoadArrayIndex
+//.output StoreArrayIndex
+//.output AssignCast
+//.output AssignLocal
+//.output AssignHeapAllocation
+//.output ReturnVar
+//.output StaticMethodInvocation
+//.output _ClassType
+//.output _ArrayType
+//.output _InterfaceType
+//.output _Var_DeclaringMethod
+//.output _ApplicationClass
+//.output _ThisVar
+//.output _NormalHeap
+//.output _StringConstant
+//.output _AssignHeapAllocation
+//.output _AssignLocal
+//.output _AssignCast
+//.output _Field
+//.output _StaticMethodInvocation
+//.output _SpecialMethodInvocation
+//.output _VirtualMethodInvocation
+//.output _Method
+//.output _StoreInstanceField
+//.output _LoadInstanceField
+//.output _StoreStaticField
+//.output _LoadStaticField
+//.output _StoreArrayIndex
+//.output _LoadArrayIndex
+//.output _Return
 .output ClassInitializer
 .output InitializedClass
 .output Assign
