@@ -1,3 +1,13 @@
+// this simple implementation does NOT consider the control flow graph
+// i.e. if (){
+//           x=1;} 
+//       else{
+//           x=2;} 
+//       y=x; 
+// will lead to inconsistencies in the calculation
+// thus it is insufficient for real world examples
+
+
 // own relations:
 .decl ConstFolding(a:symbol, c:symbol, b:number,e:symbol)
 .decl IntegerConstant(a:symbol, b:number,e:symbol)
@@ -19,7 +29,6 @@
 
 
 // AssignLocal:              holds assignments of type a = b. However we use the filtered version ("AssignLocalNoPhi.facts"), 
-//                           which only holds static assignments (assignments that include the a:symbol "phi-assign" are dynamically and have been removed)
 .decl AssignLocal(a:symbol, b:number, c:symbol, d:symbol, e:symbol)
 .input AssignLocal(IO="file", filename="AssignLocal.facts")
 
@@ -72,27 +81,26 @@ IntegerConstant(?var, ?val,?meth) :-
 IntegerConstant(?var_to, ?val, ?meth),
 ConstFolding(?ins,?var_to, ?val,  ?meth) :-
     AssignLocal(?ins, _, ?var_from, ?var_to, ?meth),
-    //!contains("phi",?ins),
+    !contains("phi",?ins),
     IntegerConstant(?var_from, ?val, ?meth).
 
 
 
 // Unary-Negation: "-" is translated to "~" in OperatorAt
-
 IntegerConstant(?var, 0 - ?val1, ?meth),
 ConstFolding(?ins,?var, 0 - ?val1,  ?meth) :-
     AssignUnop(?ins,_, ?var, ?meth),
     OperatorAt(?ins, ?op),
     ?op = "~",
     AssignOperFrom(?ins, _, ?var1),
-    IntegerConstant(?var1, ?val1, ?meth) .
+    IntegerConstant(?var1, ?val1, ?meth).
 
 IntegerConstant(?var, 0 - ?val1, ?meth),
 ConstFolding(?ins,?var, 0 - ?val1,  ?meth) :-
     AssignUnop(?ins,_, ?var, ?meth),
     OperatorAt(?ins, ?op),
     ?op = "~",
-    AssignOperFromConstant(?ins, _, ?val1) .
+    AssignOperFromConstant(?ins, _, ?val1).
 
 
 // Addition
@@ -103,7 +111,7 @@ ConstFolding(?ins,?var, ?val1 + ?val2,  ?meth) :-
     ?op = "+",
     AssignOperFromConstant(?ins, _, ?val1),
     AssignOperFrom(?ins, _, ?var2),
-    IntegerConstant(?var2, ?val2,?meth) .
+    IntegerConstant(?var2, ?val2,?meth).
 
 
 IntegerConstant(?var, ?val1 + ?val2, ?meth),
@@ -124,7 +132,7 @@ ConstFolding(?ins,?var, ?val1 + ?val2,  ?meth) :-
     AssignOperFrom(?ins, ?pos2, ?var2),
     ?pos1 < ?pos2,
     IntegerConstant(?var1, ?val1, ?meth),
-    IntegerConstant(?var2, ?val2,?meth) .
+    IntegerConstant(?var2, ?val2,?meth).
 
 
 
@@ -138,7 +146,7 @@ ConstFolding(?ins,?var, ?val1 - ?val2,  ?meth) :-
     AssignOperFromConstant(?ins, ?pos1, ?val1),
     AssignOperFrom(?ins, ?pos2, ?var2),
     ?pos1 < ?pos2, 
-    IntegerConstant(?var2, ?val2,?meth) .
+    IntegerConstant(?var2, ?val2,?meth).
 
 IntegerConstant(?var, ?val1 - ?val2, ?meth),
 ConstFolding(?ins,?var, ?val1 - ?val2,  ?meth) :-
@@ -168,7 +176,7 @@ ConstFolding(?ins,?var, ?val1 - ?val2,?meth) :-
     AssignOperFrom(?ins, ?pos2, ?var2),
     ?pos1 < ?pos2,
     IntegerConstant(?var1, ?val1, ?meth),
-    IntegerConstant(?var2, ?val2,?meth) .
+    IntegerConstant(?var2, ?val2,?meth).
 
 
 
@@ -180,7 +188,7 @@ ConstFolding(?ins,?var, ?val1 * ?val2,  ?meth) :-
     ?op = "*",
     AssignOperFromConstant(?ins, _, ?val1),
     AssignOperFrom(?ins, _, ?var2),
-    IntegerConstant(?var2, ?val2,?meth) .
+    IntegerConstant(?var2, ?val2,?meth).
 
 IntegerConstant( ?var, ?val1 * ?val2, ?meth),
 ConstFolding(?ins,?var, ?val1 * ?val2,  ?meth) :-
@@ -200,7 +208,7 @@ ConstFolding(?ins,?var, ?val1 * ?val2,  ?meth) :-
     AssignOperFrom(?ins, ?pos2, ?var2),
     ?pos1 < ?pos2,
     IntegerConstant(?var1, ?val1, ?meth),
-    IntegerConstant(?var2, ?val2,?meth) .
+    IntegerConstant(?var2, ?val2,?meth).
 
 // Division
 
@@ -212,7 +220,7 @@ ConstFolding(?ins,?var, ?val1 / ?val2,  ?meth) :-
     AssignOperFromConstant(?ins, ?pos1, ?val1),
     AssignOperFrom(?ins, ?pos2, ?var2),
     ?pos1 < ?pos2, 
-    IntegerConstant(?var2, ?val2,?meth) .
+    IntegerConstant(?var2, ?val2,?meth).
 
 IntegerConstant(?var, ?val1 / ?val2, ?meth),
 ConstFolding(?ins,?var, ?val1 / ?val2,  ?meth) :-
@@ -242,7 +250,7 @@ ConstFolding(?ins,?var, ?val1 / ?val2,  ?meth) :-
     AssignOperFrom(?ins, ?pos2, ?var2),
     ?pos1 < ?pos2,
     IntegerConstant(?var1, ?val1, ?meth),
-    IntegerConstant(?var2, ?val2,?meth) .
+    IntegerConstant(?var2, ?val2,?meth).
 
 
 .output ConstFolding
